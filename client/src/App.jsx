@@ -16,6 +16,10 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 // Route Guards
 import ProtectedRoute from './route/ProtectedRoute';
 import PublicRoute from './route/PublicRoute';
+import Course from './pages/public/Course';
+import Contact from './pages/public/Contact';
+import AdminCourses from './pages/admin/AdminCourses';
+
 
 function App() {
   return (
@@ -24,7 +28,8 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
-        
+        <Route path="course" element={<Course />} />
+        <Route path="contact" element={<Contact />} />
         {/* Only accessible if NOT logged in */}
         <Route 
           path="login" 
@@ -52,11 +57,16 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
       </Route>
 
       {/* Admin Routes with Admin Layout */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
+        <Route path='course' element={<AdminCourses />} />
+        
+       
+
       </Route>
       
       {/* Fallback */}

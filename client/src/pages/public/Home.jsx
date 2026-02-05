@@ -7,10 +7,10 @@ const Home = () => {
   return (
     <div className="text-center py-20">
       <h1 className="text-5xl font-extrabold text-gray-900 mb-6">
-        Build Faster with <span className="text-blue-600">React + Node</span>
+        Course Platform <span className="text-blue-600"></span>
       </h1>
       <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-        This is a complete full-stack authentication starter template with Role-Based Access Control (RBAC).
+        This is a Platform to Choose a Course.
       </p>
       
       <div className="space-x-4">
@@ -19,7 +19,7 @@ const Home = () => {
             to="/profile" 
             className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
           >
-            Go to Dashboard
+            Go to Course
           </Link>
         ) : (
           <>

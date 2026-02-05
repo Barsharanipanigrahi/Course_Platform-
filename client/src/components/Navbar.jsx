@@ -14,19 +14,25 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             <Link to="/" className="text-gray-700 hover:text-blue-600">Home</Link>
             <Link to="/about" className="text-gray-700 hover:text-blue-600">About</Link>
-            
+            <Link to="/course" className="text-gray-700 hover:text-blue-600">Course</Link>
+            <Link to="/contact" className="text-gray-700 hover:text-blue-600">Contact</Link>
+
+
             {user ? (
               <>
                 <span className="text-gray-500">Hi, {user.name}</span>
                 {user.role === 'admin' && (
                   <Link to="/admin" className="text-blue-600 font-semibold">Admin Panel</Link>
                 )}
+                
                 <button 
                   onClick={logout}
                   className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                 >
                   Logout
                 </button>
+
+                
               </>
             ) : (
               <>

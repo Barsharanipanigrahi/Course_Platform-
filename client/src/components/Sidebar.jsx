@@ -8,10 +8,13 @@ const Sidebar = () => {
     <div className="w-64 bg-gray-800 h-screen text-white flex flex-col">
       <div className="p-4 text-2xl font-bold border-b border-gray-700">
         Admin Panel
+  
+
       </div>
       <nav className="flex-1 p-4 space-y-2">
         <Link to="/admin" className="block py-2 px-4 hover:bg-gray-700 rounded">Dashboard</Link>
-        <Link to="/admin/users" className="block py-2 px-4 hover:bg-gray-700 rounded">Users</Link>
+        <Link to="/admin/course" className="block py-2 px-4 hover:bg-gray-700 rounded">Courses</Link>
+        <Link to="/admin/course" className="block py-2 px-4 hover:bg-gray-700 rounded">AllCourses</Link>
         <Link to="/" className="block py-2 px-4 hover:bg-gray-700 rounded text-gray-400">Back to Site</Link>
       </nav>
       <div className="p-4 border-t border-gray-700">
