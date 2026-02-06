@@ -1,11 +1,12 @@
-// import React from 'react'
+import React from 'react'
 
-// const Mycourses = () => {
-//   return (
-//     <div>
-//       <h1 className="text-3xl font-bold text-gray-800 mb-6">Profile</h1>
-//     </div>
-//   )
-// }
+const Mycourses = () => {
+  return (
+    <div>
+      my courses
+    </div>
+  )
+}
 
-// export default Mycourses
+export default Mycourses
+

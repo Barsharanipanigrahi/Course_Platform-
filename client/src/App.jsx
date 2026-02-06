@@ -19,6 +19,7 @@ import PublicRoute from './route/PublicRoute';
 import Course from './pages/public/Course';
 import Contact from './pages/public/Contact';
 import AdminCourses from './pages/admin/AdminCourses';
+import Mycourses from './pages/user/Mycourses';
 
 
 function App() {
@@ -54,6 +55,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          } 
+        />
+
+<Route 
+          path="mycourses" 
+          element={
+            <ProtectedRoute>
+              <Mycourses/>
             </ProtectedRoute>
           } 
         />
