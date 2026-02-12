@@ -2,7 +2,7 @@ const Contact = require("../model/Contact");
 
 const AddContact = async (req, res) => {
   try {
-    const contact = await Contact.create(req, res)
+    const contact = await Contact.create(req.body)
 
 
     return res.json({
@@ -40,7 +40,7 @@ const GetContact = async (req, res) => {
 }
 const UpdateContact=async (req,res)=>{
   try{
-    const UpdateContact=await Contact.findByIdAndUpdate(req.param.id,req.body)
+    const UpdateContact=await Contact.findByIdAndUpdate(req.params.id,req.body)
     return res.json({
       message:"updated contact",
       status:true,
@@ -48,6 +48,8 @@ const UpdateContact=async (req,res)=>{
       // id :req.param.id
     })
   }catch (err){
+console.log(err)
+
     return res.json({
       message:"error while update",
 

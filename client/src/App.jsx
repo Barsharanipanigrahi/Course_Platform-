@@ -20,6 +20,7 @@ import Course from './pages/public/Course';
 import Contact from './pages/public/Contact';
 import AdminCourses from './pages/admin/AdminCourses';
 import Mycourses from './pages/user/Mycourses';
+import AdminContacts from './pages/admin/AdminContacts';
 
 
 function App() {
@@ -74,6 +75,7 @@ function App() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
         <Route path='course' element={<AdminCourses />} />
+        <Route path='contact' element={<AdminContacts />} />
         
        
 
