@@ -1,6 +1,5 @@
 // import { Link } from 'react-router-dom';
 // import { useAuth } from '../../context/AuthContext';
-
 // const Home = () => {
 //   const { user } = useAuth();
 
@@ -42,16 +41,9 @@
 //     </div>
 //   );
 // };
-
 // export default Home;
-
-
-
-
-
 // import { Link } from 'react-router-dom';
 // import { useAuth } from '../../context/AuthContext';
-
 // const Home = () => {
 //   const { user } = useAuth();
 
@@ -108,15 +100,9 @@
 //     </div>
 //   );
 // };
-
 // export default Home;
-
-
-
-
 // import { Link } from 'react-router-dom';
 // import { useAuth } from '../../context/AuthContext';
-
 // const Home = () => {
 //   const { user } = useAuth();
 
@@ -247,7 +233,6 @@
 //     </div>
 //   );
 // };
-
 // export default Home;
 
 
@@ -372,6 +357,54 @@ const Home = () => {
           ))}
         </div>
       </div>
+
+      {/* FOOTER */}
+<footer className="bg-gray-900 text-gray-300 mt-20">
+  <div className="max-w-6xl mx-auto px-6 py-10">
+
+    <div className="grid md:grid-cols-3 gap-8 text-center md:text-left">
+
+      {/* Brand */}
+      <div>
+        <h3 className="text-2xl font-bold text-white mb-2">
+          Course Platform
+        </h3>
+        <p className="text-gray-400">
+          Learn. Build. Grow your skills online.
+        </p>
+      </div>
+
+      {/* Links */}
+      <div>
+        <h4 className="text-lg font-semibold text-white mb-3">
+          Quick Links
+        </h4>
+        <ul className="space-y-2">
+          <li className="hover:text-white cursor-pointer">Courses</li>
+          <li className="hover:text-white cursor-pointer">About</li>
+          <li className="hover:text-white cursor-pointer">Contact</li>
+        </ul>
+      </div>
+
+      {/* Contact */}
+      <div>
+        <h4 className="text-lg font-semibold text-white mb-3">
+          Support
+        </h4>
+        <p className="text-gray-400">Email: courseplatform@2026.com</p>
+        <p className="text-gray-400">Phone: +91 6371911256</p>
+      </div>
+
+    </div>
+
+    {/* Bottom */}
+    <div className="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-400">
+      © {new Date().getFullYear()} Course Platform. All rights reserved.
+    </div>
+
+  </div>
+</footer>
+
 
     </div>
   );

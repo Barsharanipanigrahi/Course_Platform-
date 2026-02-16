@@ -6,7 +6,7 @@ const AddCourses=async (req,res)=>{
 
         return res.json({
             message:"sucess",
-            Courses:courses,
+            courses:courses,
             status:true
         });
     }catch (err){

@@ -18,9 +18,10 @@ import ProtectedRoute from './route/ProtectedRoute';
 import PublicRoute from './route/PublicRoute';
 import Course from './pages/public/Course';
 import Contact from './pages/public/Contact';
-import AdminCourses from './pages/admin/AdminCourses';
+
 import Mycourses from './pages/user/Mycourses';
 import AdminContacts from './pages/admin/AdminContacts';
+import AdminCourses from './pages/admin/AdminCourses';
 
 
 function App() {
@@ -30,8 +31,9 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
-        <Route path="course" element={<Course />} />
+        
         <Route path="contact" element={<Contact />} />
+        <Route path="course" element={<Course />} />
         {/* Only accessible if NOT logged in */}
         <Route 
           path="login" 
