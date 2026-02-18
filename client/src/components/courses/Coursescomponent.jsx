@@ -51,7 +51,7 @@ export default function AddCourses({ fetchCourses, setShowForm, editCourses, set
 
       fetchCourses(); // refresh list
       setShowForm(false);
-      setCourseData({ title: "", price: "", description: "", image: "" }); // reset form
+      setCourseData({ title: "", price: "", description: ""}); // reset form
 
     } catch (error) {
       console.log(error);
@@ -92,14 +92,7 @@ export default function AddCourses({ fetchCourses, setShowForm, editCourses, set
           className="border p-2"
         />
 
-        <input
-          type="text"
-          name="image"
-          value={courseData.image}
-          placeholder="Image URL"
-          onChange={handleChange}
-          className="border p-2"
-        />
+        
 
         <button type="submit" className="bg-yellow-500 text-white p-2">
           {editCourses ? "Update Course" : "Add Course"}

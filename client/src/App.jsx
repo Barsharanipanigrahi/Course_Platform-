@@ -34,6 +34,7 @@ function App() {
         
         <Route path="contact" element={<Contact />} />
         <Route path="course" element={<Course />} />
+        <Route path="courses" element={<Course />} />
         {/* Only accessible if NOT logged in */}
         <Route 
           path="login" 
@@ -43,6 +44,8 @@ function App() {
             </PublicRoute>
           } 
         />
+        
+
         <Route 
           path="register" 
           element={
