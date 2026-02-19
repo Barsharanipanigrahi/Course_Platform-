@@ -16,6 +16,7 @@ const Navbar = () => {
             <Link to="/about" className="text-gray-700 hover:text-blue-600">About</Link>
             <Link to="/course" className="text-gray-700 hover:text-blue-600">Course</Link>
             <Link to="/contact" className="text-gray-700 hover:text-blue-600">Contact</Link>
+            <Link to="/admission" className="text-gray-700 hover:text-blue-600">Admission</Link>
 
 
             {user ? (
@@ -38,6 +39,7 @@ const Navbar = () => {
               <>
                 <Link to="/login" className="text-gray-700 hover:text-blue-600">Login</Link>
                 <Link to="/register" className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Register</Link>
+                <Link to="/admission" className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Admission</Link>
               </>
             )}
           </div>

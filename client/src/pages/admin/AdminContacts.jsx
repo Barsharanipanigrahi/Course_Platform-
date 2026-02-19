@@ -41,8 +41,8 @@ const AdminContacts = () => {
 
     //update contact
 
-    const handleUpdate = (product) => {
-        setEditProduct(product);
+    const handleUpdate = (contacts) => {
+        setEditontact(contacts);
         setShowForm(true);
     };
 

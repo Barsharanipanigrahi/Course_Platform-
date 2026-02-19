@@ -10,6 +10,7 @@ import Home from './pages/public/Home';
 import About from './pages/public/About';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
+import Admission from './pages/public/Admission';
 import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
@@ -22,6 +23,7 @@ import Contact from './pages/public/Contact';
 import Mycourses from './pages/user/Mycourses';
 import AdminContacts from './pages/admin/AdminContacts';
 import AdminCourses from './pages/admin/AdminCourses';
+import AdminAdmission from './pages/admin/AdminAdmission';
 
 
 function App() {
@@ -31,7 +33,7 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
-        
+        <Route path="admission" element={<Admission />} />
         <Route path="contact" element={<Contact />} />
         <Route path="course" element={<Course />} />
         <Route path="courses" element={<Course />} />
@@ -44,7 +46,6 @@ function App() {
             </PublicRoute>
           } 
         />
-        
 
         <Route 
           path="register" 
@@ -73,14 +74,23 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        
       </Route>
+      <Route
+  path="admission"
+  element={
+    <ProtectedRoute>
+      <Admission />
+    </ProtectedRoute>
+  }
+/>
+      
 
       {/* Admin Routes with Admin Layout */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
         <Route path='course' element={<AdminCourses />} />
         <Route path='contact' element={<AdminContacts />} />
+        <Route path='admission' element={<AdminAdmission />} />
         
        
 

@@ -15,6 +15,7 @@ const Sidebar = () => {
         <Link to="/admin" className="block py-2 px-4 hover:bg-gray-700 rounded">Dashboard</Link>
         <Link to="/admin/course" className="block py-2 px-4 hover:bg-gray-700 rounded">Courses</Link>
         <Link to="/admin/contact" className="block py-2 px-4 hover:bg-gray-700 rounded">Contacts</Link>
+        <Link to="/admin/admission" className="block py-2 px-4 hover:bg-gray-700 rounded">Admission</Link>
         <Link to="/" className="block py-2 px-4 hover:bg-gray-700 rounded text-gray-400">Back to Site</Link>
       </nav>
       <div className="p-4 border-t border-gray-700">

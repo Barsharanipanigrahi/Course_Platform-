@@ -6,7 +6,7 @@ export default function AddCourses({ fetchCourses, setShowForm, editCourses, set
     title: "",
     price: "",
     description: "",
-    image: ""
+   
   });
 
   // Fill form when editing
@@ -16,7 +16,7 @@ export default function AddCourses({ fetchCourses, setShowForm, editCourses, set
         title: editCourses.title || "",
         price: editCourses.price || "",
         description: editCourses.description || "",
-        image: editCourses.image || "",
+        
       });
     }
   }, [editCourses]);
