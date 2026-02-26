@@ -9,35 +9,31 @@ const protect = async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     try {
-      // Get token from header (Bearer <token>)
       token = req.headers.authorization.split(' ')[1];
 
-      // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get user from the token
       req.user = await User.findById(decoded.id).select('-password');
-      req.user.role = decoded.role; // Ensure role is passed
 
       next();
     } catch (error) {
-      console.log(error);
-      res.status(401).json({ message: 'Not authorized' });
+      return res.status(401).json({ message: 'Not authorized' });
     }
   }
 
   if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+    return res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
 
+
 // Admin middleware
 const adminOnly = (req, res, next) => {
-    if (req.user && req.user.role === 'admin') {
-        next();
-    } else {
-        res.status(401).json({ message: 'Not authorized as an admin' });
-    }
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(401).json({ message: 'Not authorized as an admin' });
+  }
 }
 
 module.exports = { protect, adminOnly };

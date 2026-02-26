@@ -1,99 +1,200 @@
-import React, { useEffect, useState } from 'react';
-import axios from "axios";
-import AddCourses from '../../components/courses/Coursescomponent';
+import React, { useEffect, useState } from "react";
+import api from "../../services/api";
+import {
+  Eye,
+  Pencil,
+  Trash2,
+  PlusCircle,
+  BookOpen,
+} from "lucide-react";
 
-function AdminCourses() {
-    const url = import.meta.env.VITE_BACKEND_URL;
+import ViewCourseModal from "../../components/course/ViewCourseModal";
+import EditCourseModal from "../../components/course/EditCourseModal";
+import AddCourseModal from "../../components/course/AddCourseModal";
+import DeleteConfirmModal from "../../components/common/DeleteConfirmModal";
 
-    const [courses, setCourses] = useState([]);
-    const [showForm, setShowForm] = useState(false);
-    const [editCourses, setEditCourses] = useState(null);
+const AdminCourses = () => {
+  const [courses, setCourses] = useState([]);
+  const [selected, setSelected] = useState(null);
 
-    const fetchCourses = async () => {
-        try {
-            const res = await axios.get(url + "/course/get");
-            if (res.data.status) {
-                setCourses(res.data.courses);
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    };
+  const [addOpen, setAddOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-    useEffect(() => {
-        fetchCourses();
-    }, []);
+  // FETCH COURSES
+  const fetchCourses = async () => {
+    try {
+      const res = await api.get("/course/get");
+      if (res.data.status) {
+        setCourses(res.data.courses);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure?")) return;
-        try {
-            const res = await axios.delete(url + `/course/delete/${id}`);
-            if (res.data.status) {
-                fetchCourses();
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    };
+  useEffect(() => {
+    fetchCourses();
+  }, []);
 
-    const handleUpdate = (course) => {
-        setEditCourses(course);
-        setShowForm(true);
-    };
+  // ADD COURSE
+  const addCourse = async (data) => {
+    const res = await api.post("/course/add", data);
+    if (res.data.status) {
+      setAddOpen(false);
+      fetchCourses();
+    }
+  };
 
-    const handleAdd = () => {
-        setEditCourses(null);
-        setShowForm(true);
-    };
+  // UPDATE COURSE
+  const updateCourse = async (data) => {
+    const res = await api.put(`/course/update/${data._id}`, data);
+    if (res.data.status) {
+      setEditOpen(false);
+      fetchCourses();
+    }
+  };
 
-    return (
-        <div>
-            <button className='bg-blue-800 p-2 text-white mb-3' onClick={showForm ? () => setShowForm(false) : handleAdd}>
-                {showForm ? "Cancel" : "Add"}
-            </button>
+  // DELETE COURSE
+  const deleteCourse = async () => {
+    const res = await api.delete(`/course/delete/${selected._id}`);
+    if (res.data.status) {
+      setDeleteOpen(false);
+      fetchCourses();
+    }
+  };
 
-            {showForm && (
-                <AddCourses
-                    fetchCourses={fetchCourses}
-                    setShowForm={setShowForm}
-                    editCourses={editCourses}
-                    setEditCourses={setEditCourses}
-                />
-            )}
-
-            <table className='w-full'>
-                <thead className='border bg-blue-400'>
-                    <tr>
-                        <th>Title</th>
-                        <th>Price</th>
-                        <th>Description</th>
-                        <th>Delete</th>
-                        <th>Update</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {courses.map(course => (
-                        <tr key={course._id}>
-                            <td>{course.title}</td>
-                            <td>{course.price}</td>
-                            <td>{course.description}</td>
-                            
-                            <td>
-                                <button className="bg-red-600 text-white px-2 py-1 rounded" onClick={() => handleDelete(course._id)}>
-                                    Delete
-                                </button>
-                            </td>
-                            <td>
-                                <button className="bg-green-600 text-white px-2 py-1 rounded" onClick={() => handleUpdate(course)}>
-                                    Update
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+  return (
+    <div className="p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <BookOpen className="w-7 h-7 text-blue-600" />
+          <h1 className="text-2xl font-bold text-slate-800">
+            Admin Courses
+          </h1>
         </div>
-    );
-}
+
+        <button
+          onClick={() => setAddOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white
+                     px-4 py-2 rounded-lg shadow
+                     hover:bg-blue-700 transition"
+        >
+          <PlusCircle className="w-5 h-5" />
+          Add Course
+        </button>
+      </div>
+
+      {/* Table Card */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-slate-100 text-slate-600">
+            <tr>
+              <th className="p-3 text-left">Title</th>
+              <th className="p-3 text-left">Price</th>
+              <th className="p-3 text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {courses.length === 0 ? (
+              <tr>
+                <td colSpan="3" className="text-center p-6 text-slate-500">
+                  No courses found
+                </td>
+              </tr>
+            ) : (
+              courses.map((course) => (
+                <tr
+                  key={course._id}
+                  className="border-t hover:bg-slate-50 transition"
+                >
+                  <td className="p-3 font-medium text-slate-800">
+                    {course.title}
+                  </td>
+
+                  <td className="p-3 text-slate-600">
+                    ₹ {course.price}
+                  </td>
+
+                  <td className="p-3">
+                    <div className="flex items-center justify-center gap-4">
+                      {/* View */}
+                      <button
+                        title="View"
+                        onClick={() => {
+                          setSelected(course);
+                          setViewOpen(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Eye className="w-5 h-5" />
+                      </button>
+
+                      {/* Edit */}
+                      <button
+                        title="Edit"
+                        onClick={() => {
+                          setSelected(course);
+                          setEditOpen(true);
+                        }}
+                        className="text-green-600 hover:text-green-800"
+                      >
+                        <Pencil className="w-5 h-5" />
+                      </button>
+
+                      {/* Delete */}
+                      <button
+                        title="Delete"
+                        onClick={() => {
+                          setSelected(course);
+                          setDeleteOpen(true);
+                        }}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* MODALS */}
+      <AddCourseModal
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onSave={addCourse}
+      />
+
+      <EditCourseModal
+        open={editOpen}
+        course={selected}
+        onClose={() => setEditOpen(false)}
+        onUpdate={updateCourse}
+      />
+
+      <ViewCourseModal
+        open={viewOpen}
+        course={selected}
+        onClose={() => setViewOpen(false)}
+      />
+      <DeleteConfirmModal
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onDelete={deleteCourse}
+        title="Delete Course?"
+        description="Are you sure you want to delete this course? This action cannot be undone."
+        confirmText="Delete Course"
+      />
+
+    </div>
+  );
+};
 
 export default AdminCourses;

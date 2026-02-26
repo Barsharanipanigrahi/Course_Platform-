@@ -16,30 +16,39 @@ const Navbar = () => {
             <Link to="/about" className="text-gray-700 hover:text-blue-600">About</Link>
             <Link to="/course" className="text-gray-700 hover:text-blue-600">Course</Link>
             <Link to="/contact" className="text-gray-700 hover:text-blue-600">Contact</Link>
-            <Link to="/admission" className="text-gray-700 hover:text-blue-600">Admission</Link>
-
 
             {user ? (
               <>
                 <span className="text-gray-500">Hi, {user.name}</span>
+
+                {/* 👇 PROFILE LINK */}
+                <Link
+                  to="/profile"
+                  className="text-gray-700 hover:text-blue-600"
+                >
+                  Profile
+                </Link>
+
                 {user.role === 'admin' && (
-                  <Link to="/admin" className="text-blue-600 font-semibold">Admin Panel</Link>
+                  <Link
+                    to="/admin"
+                    className="text-blue-600 font-semibold"
+                  >
+                    Admin Panel
+                  </Link>
                 )}
-                
-                <button 
+
+                <button
                   onClick={logout}
                   className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                 >
                   Logout
                 </button>
-
-                
               </>
             ) : (
               <>
                 <Link to="/login" className="text-gray-700 hover:text-blue-600">Login</Link>
                 <Link to="/register" className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Register</Link>
-                <Link to="/admission" className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Admission</Link>
               </>
             )}
           </div>

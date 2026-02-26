@@ -19,56 +19,53 @@ const AddContact = async (req, res) => {
 };
 const GetContact = async (req, res) => {
   try {
-    const xyz=await Contact.find()
+    const contacts = await Contact.find();
+
     return res.json({
-      message:"lets get contact",
-      Contact:xyz,
-      status:true
+      message: "lets get contact",
+      Contacts: contacts,   // ✅ plural
+      status: true
     });
-  }
-  catch (err) {
-
-    console.log(err)
-
+  } catch (err) {
+    console.log(err);
     return res.json({
       message: "error while fetch",
       status: false,
-    })
-
+    });
   }
+};
 
-}
-const UpdateContact=async (req,res)=>{
-  try{
-    const UpdateContact=await Contact.findByIdAndUpdate(req.params.id,req.body)
+const UpdateContact = async (req, res) => {
+  try {
+    const UpdateContact = await Contact.findByIdAndUpdate(req.params.id, req.body)
     return res.json({
-      message:"updated contact",
-      status:true,
+      message: "updated contact",
+      status: true,
       UpdateContact
       // id :req.param.id
     })
-  }catch (err){
-console.log(err)
+  } catch (err) {
+    console.log(err)
 
     return res.json({
-      message:"error while update",
+      message: "error while update",
 
     })
   }
 }
-const DeleteContact= async (req,res)=>{
-  try{
-    const DeleteContact=await Contact.findByIdAndDelete(req.params.id)
+const DeleteContact = async (req, res) => {
+  try {
+    const DeleteContact = await Contact.findByIdAndDelete(req.params.id)
     return res.json({
-      message:"deleted contact",
-      status:true
+      message: "deleted contact",
+      status: true
     })
 
-  }catch(err){
+  } catch (err) {
     console.log(err);
     return res.json({
-      message:"error while delete",
-      status:false,
+      message: "error while delete",
+      status: false,
     })
   }
 };

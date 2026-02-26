@@ -10,7 +10,6 @@ import Home from './pages/public/Home';
 import About from './pages/public/About';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
-import Admission from './pages/public/Admission';
 import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
@@ -19,11 +18,11 @@ import ProtectedRoute from './route/ProtectedRoute';
 import PublicRoute from './route/PublicRoute';
 import Course from './pages/public/Course';
 import Contact from './pages/public/Contact';
-
+import AdminCourses from './pages/admin/AdminCourses';
 import Mycourses from './pages/user/Mycourses';
 import AdminContacts from './pages/admin/AdminContacts';
-import AdminCourses from './pages/admin/AdminCourses';
-import AdminAdmission from './pages/admin/AdminAdmission';
+import CourseDetails from './components/home/CourseDetails';
+import AdminUsers from './pages/admin/AdminUsers';
 
 
 function App() {
@@ -33,10 +32,9 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
-        <Route path="admission" element={<Admission />} />
-        <Route path="contact" element={<Contact />} />
         <Route path="course" element={<Course />} />
-        <Route path="courses" element={<Course />} />
+        <Route path="course/:id" element={<CourseDetails />} />
+        <Route path="contact" element={<Contact />} />
         {/* Only accessible if NOT logged in */}
         <Route 
           path="login" 
@@ -46,7 +44,6 @@ function App() {
             </PublicRoute>
           } 
         />
-
         <Route 
           path="register" 
           element={
@@ -74,25 +71,15 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
       </Route>
-      <Route
-  path="admission"
-  element={
-    <ProtectedRoute>
-      <Admission />
-    </ProtectedRoute>
-  }
-/>
-      
 
       {/* Admin Routes with Admin Layout */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
         <Route path='course' element={<AdminCourses />} />
         <Route path='contact' element={<AdminContacts />} />
-        <Route path='admission' element={<AdminAdmission />} />
-        
-       
+        <Route path='users' element={<AdminUsers />} />
 
       </Route>
       
