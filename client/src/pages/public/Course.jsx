@@ -27,15 +27,15 @@ const Courses = () => {
   }, []);
 
   return (
-    <section className="min-h-screen bg-slate-50 py-20 px-6">
+    <section className="min-h-screen bg-gradient-to-br from-indigo-200 to-purple-200 py-20 px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Heading */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-extrabold text-slate-900 mb-4">
+          <h1 className="text-4xl font-extrabold text-indigo-900 mb-4">
             Explore Our Courses
           </h1>
-          <p className="text-slate-600 max-w-2xl mx-auto">
+          <p className="text-black-600 max-w-2xl mx-auto">
             Learn job-ready skills with hands-on projects, expert guidance,
             and real-world experience.
           </p>
@@ -61,7 +61,7 @@ const Courses = () => {
             {courses.map((course) => (
               <div
                 key={course._id}
-                className="bg-white rounded-2xl shadow-md
+                className="bg-white hover:bg-yellow-200 rounded-2xl shadow-md
                            hover:shadow-xl transition duration-300
                            overflow-hidden group"
               >
@@ -75,19 +75,19 @@ const Courses = () => {
                     >
                       <BookOpen className="w-6 h-6 text-blue-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-800">
+                    <h3 className="text-xl font-bold text-blue-800">
                       {course.title}
                     </h3>
                   </div>
 
                   {/* Description */}
-                  <p className="text-slate-600 text-sm mb-6 line-clamp-3">
+                  <p className="text-black-600 text-sm mb-6 line-clamp-3">
                     {course.description}
                   </p>
 
                   {/* Footer */}
                   <div className="mt-auto flex items-center justify-between">
-                    <span className="text-lg font-bold text-blue-600">
+                    <span className="text-lg font-bold text-purple-600">
                       ₹ {course.price || "Free"}
                     </span>
 

@@ -33,7 +33,7 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 space-y-8">
+    <div className="max-w-4xl  mx-auto mt-10 space-y-8">
 
       {/* PROFILE CARD */}
       <div className="bg-white shadow rounded-xl overflow-hidden">
