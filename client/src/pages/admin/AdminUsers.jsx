@@ -4,149 +4,141 @@ import api from "../../services/api";
 import ViewEnrollmentsModal from "../../components/home/ViewEnrollmentsModal";
 
 const AdminUsers = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [openModal, setOpenModal] = useState(false);
-    const [enrollments, setEnrollments] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
+  const [enrollments, setEnrollments] = useState([]);
 
-    const fetchUsers = async () => {
-        try {
-            const res = await api.get("/user/get", {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-            });
-            if (res.data.status) setUsers(res.data.users);
-        } catch (err) {
-            console.log(err);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const fetchUsers = async () => {
+    try {
+      const res = await api.get("/user/get", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      if (res.data.status) setUsers(res.data.users);
+    } catch (err) { console.log(err); }
+    finally { setLoading(false); }
+  };
 
-    const deleteUser = async (id) => {
-        if (!window.confirm("Delete this user?")) return;
-        try {
-            const res = await api.delete(`/user/delete/${id}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-            });
-            if (res.data.status) setUsers((prev) => prev.filter((u) => u._id !== id));
-        } catch (err) {
-            console.log(err);
-        }
-    };
+  const deleteUser = async (id) => {
+    if (!window.confirm("Delete this user?")) return;
+    try {
+      const res = await api.delete(`/user/delete/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      if (res.data.status) setUsers((prev) => prev.filter((u) => u._id !== id));
+    } catch (err) { console.log(err); }
+  };
 
-    const viewEnrollments = async (userId) => {
-        try {
-            const res = await api.get(`/enrollment/user/${userId}`);
-            if (res.data.status) { setEnrollments(res.data.enrollments); setOpenModal(true); }
-        } catch (err) {
-            console.log(err);
-        }
-    };
+  const viewEnrollments = async (userId) => {
+    try {
+      const res = await api.get(`/enrollment/user/${userId}`);
+      if (res.data.status) { setEnrollments(res.data.enrollments); setOpenModal(true); }
+    } catch (err) { console.log(err); }
+  };
 
-    useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => { fetchUsers(); }, []);
 
-    return (
-        <div
-            className="p-8 min-h-screen"
-            style={{ background: "linear-gradient(160deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)" }}
-        >
-            {/* Header */}
-            <div className="mb-8">
-                <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "#c9a84c" }}>
-                    Management
-                </p>
-                <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-3" style={{ color: "#f1f5f9" }}>
-                    <Users className="w-7 h-7" style={{ color: "#c9a84c" }} />
-                    Users
-                </h1>
-                <div className="mt-2 h-px w-16" style={{ background: "linear-gradient(90deg, #c9a84c, transparent)" }} />
-            </div>
+  const rowHoverEnter = (e) => { e.currentTarget.style.background = "rgba(245,158,11,0.05)"; };
+  const rowHoverLeave = (e, i) => { e.currentTarget.style.background = i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)"; };
 
-            {loading ? (
-                <p style={{ color: "#475569" }}>Loading users...</p>
-            ) : (
-                <div
-                    className="rounded-2xl overflow-hidden"
-                    style={{
-                        background: "rgba(255,255,255,0.03)",
-                        border: "1px solid rgba(201,168,76,0.15)",
-                        boxShadow: "0 8px 40px rgba(0,0,0,0.4)",
-                    }}
+  return (
+    <div style={{ minHeight: "100vh", padding: "2rem", background: "#18181b", fontFamily: "'DM Sans', sans-serif" }}>
+
+      {/* Header */}
+      <div style={{ marginBottom: "2rem" }}>
+        <p style={{ fontSize: "0.68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: "#f59e0b", marginBottom: 4 }}>
+          Management
+        </p>
+        <h1 style={{ fontSize: "1.875rem", fontWeight: 900, color: "#fafafa", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: 10 }}>
+          <Users size={26} style={{ color: "#f59e0b" }} />
+          Users
+        </h1>
+        <div style={{ marginTop: 10, height: 2, width: 56, background: "linear-gradient(90deg, #f59e0b, transparent)", borderRadius: 2 }} />
+      </div>
+
+      {loading ? (
+        <p style={{ color: "#71717a", fontSize: "0.9rem" }}>Loading users...</p>
+      ) : (
+        <div style={{
+          borderRadius: 16, overflow: "hidden",
+          background: "#27272a",
+          border: "1px solid rgba(245,158,11,0.15)",
+          boxShadow: "0 8px 40px rgba(0,0,0,0.4)",
+        }}>
+          <table style={{ width: "100%", fontSize: "0.875rem", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "rgba(245,158,11,0.08)", borderBottom: "1px solid rgba(245,158,11,0.2)" }}>
+                {["Name", "Email", "Role", "Action"].map((h) => (
+                  <th key={h} style={{
+                    padding: "1rem", fontWeight: 700, fontSize: "0.68rem",
+                    textTransform: "uppercase", letterSpacing: "0.12em",
+                    color: "#f59e0b", textAlign: h === "Action" ? "center" : "left",
+                  }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {users.length === 0 ? (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: "center", padding: "2.5rem", color: "#52525b", fontSize: "0.875rem" }}>
+                    No users found
+                  </td>
+                </tr>
+              ) : users.map((user, i) => (
+                <tr
+                  key={user._id}
+                  style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)", transition: "background 0.15s" }}
+                  onMouseEnter={rowHoverEnter}
+                  onMouseLeave={e => rowHoverLeave(e, i)}
                 >
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr style={{ background: "rgba(201,168,76,0.08)", borderBottom: "1px solid rgba(201,168,76,0.2)" }}>
-                                {["Name", "Email", "Role", "Action"].map((h) => (
-                                    <th
-                                        key={h}
-                                        className={`p-4 font-semibold text-xs uppercase tracking-widest ${h === "Action" ? "text-center" : "text-left"}`}
-                                        style={{ color: "#c9a84c" }}
-                                    >
-                                        {h}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map((user, i) => (
-                                <tr
-                                    key={user._id}
-                                    className="transition-colors duration-150"
-                                    style={{
-                                        borderBottom: "1px solid rgba(255,255,255,0.04)",
-                                        background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)",
-                                    }}
-                                    onMouseEnter={e => e.currentTarget.style.background = "rgba(201,168,76,0.05)"}
-                                    onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)"}
-                                >
-                                    <td className="p-4 font-medium" style={{ color: "#e2e8f0" }}>{user.name}</td>
-                                    <td className="p-4" style={{ color: "#94a3b8" }}>{user.email}</td>
-                                    <td className="p-4">
-                                        <span
-                                            className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full capitalize"
-                                            style={
-                                                user.role === "admin"
-                                                    ? { background: "rgba(201,168,76,0.15)", color: "#c9a84c" }
-                                                    : { background: "rgba(52,211,153,0.12)", color: "#34d399" }
-                                            }
-                                        >
-                                            {user.role}
-                                        </span>
-                                    </td>
-                                    <td className="p-4">
-                                        <div className="flex justify-center gap-5">
-                                            <button
-                                                onClick={() => viewEnrollments(user._id)}
-                                                style={{ color: "#60a5fa" }}
-                                                onMouseEnter={e => e.currentTarget.style.color = "#93c5fd"}
-                                                onMouseLeave={e => e.currentTarget.style.color = "#60a5fa"}
-                                            >
-                                                <Eye size={17} />
-                                            </button>
-                                            <button
-                                                onClick={() => deleteUser(user._id)}
-                                                style={{ color: "#f87171" }}
-                                                onMouseEnter={e => e.currentTarget.style.color = "#fca5a5"}
-                                                onMouseLeave={e => e.currentTarget.style.color = "#f87171"}
-                                            >
-                                                <Trash2 size={17} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-
-            <ViewEnrollmentsModal
-                open={openModal}
-                onClose={() => setOpenModal(false)}
-                courses={enrollments}
-            />
+                  <td style={{ padding: "1rem", fontWeight: 600, color: "#fafafa" }}>{user.name}</td>
+                  <td style={{ padding: "1rem", color: "#a3a3a3" }}>{user.email}</td>
+                  <td style={{ padding: "1rem" }}>
+                    <span style={{
+                      fontSize: "0.65rem", fontWeight: 700, padding: "3px 10px", borderRadius: 100, textTransform: "capitalize",
+                      ...(user.role === "admin"
+                        ? { background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.25)" }
+                        : { background: "rgba(52,211,153,0.12)", color: "#34d399", border: "1px solid rgba(52,211,153,0.2)" })
+                    }}>
+                      {user.role}
+                    </span>
+                  </td>
+                  <td style={{ padding: "1rem" }}>
+                    <div style={{ display: "flex", justifyContent: "center", gap: 20 }}>
+                      <button
+                        onClick={() => viewEnrollments(user._id)}
+                        style={{ color: "#60a5fa", background: "none", border: "none", cursor: "pointer", transition: "color 0.15s" }}
+                        onMouseEnter={e => e.currentTarget.style.color = "#93c5fd"}
+                        onMouseLeave={e => e.currentTarget.style.color = "#60a5fa"}
+                      >
+                        <Eye size={17} />
+                      </button>
+                      <button
+                        onClick={() => deleteUser(user._id)}
+                        style={{ color: "#f87171", background: "none", border: "none", cursor: "pointer", transition: "color 0.15s" }}
+                        onMouseEnter={e => e.currentTarget.style.color = "#fca5a5"}
+                        onMouseLeave={e => e.currentTarget.style.color = "#f87171"}
+                      >
+                        <Trash2 size={17} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-    );
+      )}
+
+      <ViewEnrollmentsModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        courses={enrollments}
+      />
+    </div>
+  );
 };
 
 export default AdminUsers;
