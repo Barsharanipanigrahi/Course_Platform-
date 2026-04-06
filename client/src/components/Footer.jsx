@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Linkedin, Facebook, Send, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { Linkedin, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 
 const Footer = () => {
   const { user } = useAuth();
@@ -33,8 +34,7 @@ const Footer = () => {
         .ft-soc:hover{transform:translateY(-2px);}
         .ft-soc-wa{background:rgba(37,211,102,0.12);color:#25d366;}
         .ft-soc-li{background:rgba(45,212,191,0.1);color:#2dd4bf;}
-        .ft-soc-fb{background:rgba(45,212,191,0.1);color:#2dd4bf;}
-        .ft-soc-tg{background:rgba(45,212,191,0.1);color:#2dd4bf;}
+        .ft-soc-gh{background:rgba(45,212,191,0.1);color:#2dd4bf;}
         .ft-col-title{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f97316;margin-bottom:1.1rem;}
         .ft-links{list-style:none;display:flex;flex-direction:column;gap:9px;}
         .ft-lnk{font-size:0.85rem;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s;display:flex;align-items:center;gap:6px;}
@@ -63,28 +63,28 @@ const Footer = () => {
         <div className="ft-body">
           <div className="ft-body-in">
             <div>
-              <div className="ft-brand-logo">Edu<span>Learn</span></div>
+              <div className="ft-brand-logo">Lern<span>ify</span></div>
               <p className="ft-brand-desc">An online learning platform helping students grow their skills, earn certifications, and build better careers.</p>
-              <div className="ft-socials">
-                <a href="https://wa.me/916372301256" target="_blank" rel="noreferrer" className="ft-soc ft-soc-wa"><FaWhatsapp/></a>
-                <a href="https://www.linkedin.com" target="_blank" rel="noreferrer" className="ft-soc ft-soc-li"><Linkedin size={14}/></a>
-                <a href="https://www.facebook.com" target="_blank" rel="noreferrer" className="ft-soc ft-soc-fb"><Facebook size={14}/></a>
-                <a href="https://t.me" target="_blank" rel="noreferrer" className="ft-soc ft-soc-tg"><Send size={13}/></a>
-              </div>
             </div>
             <div>
               <div className="ft-col-title">Quick Links</div>
-              <ul className="ft-links">
-                {[['/', 'Home'],['/about','About Us'],['/course','Courses'],['/contact','Contact']].map(([to,label])=>(
-                  <li key={to}><Link to={to} className="ft-lnk"><span className="ft-lnk-dot"/>{label}</Link></li>
-                ))}
-              </ul>
+              <div className="ft-socials">
+                <a href="https://wa.me/916372301256" target="_blank" rel="noreferrer" className="ft-soc ft-soc-wa"><FaWhatsapp /></a>
+                <a href="https://www.linkedin.com" target="_blank" rel="noreferrer" className="ft-soc ft-soc-li"><Linkedin size={14}/></a>
+                <a href="https://github.com/Barsharanipanigrahi" target="_blank" rel="noreferrer" className="ft-soc ft-soc-gh"><FaGithub size={14}/></a>
+              </div>
             </div>
             <div>
               <div className="ft-col-title">Courses</div>
               <ul className="ft-links">
-                {['Web Development','React & Frontend','Backend Node.js','Python','UI / UX Design'].map(c=>(
-                  <li key={c}><Link to="/course" className="ft-lnk"><span className="ft-lnk-dot"/>{c}</Link></li>
+                {[
+                  ['Computer Science','Computer Science'],
+                  ['Data Science','Data Science'],
+                  ['Mathematics','Mathematics'],
+                  ['Electronics','Electronics'],
+                  ['Design & UX','Design & UX'],
+                ].map(([cat,label])=>(
+                  <li key={cat}><Link to={`/courses?category=${encodeURIComponent(cat)}`} className="ft-lnk"><span className="ft-lnk-dot"/>{label}</Link></li>
                 ))}
               </ul>
             </div>
@@ -96,7 +96,7 @@ const Footer = () => {
             </div>
           </div>
           <div className="ft-bottom">
-            <div className="ft-copy">© {new Date().getFullYear()} EduLearn. All rights reserved.</div>
+            <div className="ft-copy">© {new Date().getFullYear()} Lernify. All rights reserved.</div>
             <div className="ft-btm-links">
               <a href="#" className="ft-btm-lnk">Privacy Policy</a>
               <a href="#" className="ft-btm-lnk">Terms of Service</a>
@@ -108,4 +108,5 @@ const Footer = () => {
     </>
   );
 };
+
 export default Footer;

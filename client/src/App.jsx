@@ -12,6 +12,8 @@ import Login from './pages/public/Login';
 import Register from './pages/public/Register';
 import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminEnrollments from './pages/admin/AdminEnrollments';
 
 // Route Guards
 import ProtectedRoute from './route/ProtectedRoute';
@@ -24,7 +26,6 @@ import AdminContacts from './pages/admin/AdminContacts';
 import CourseDetails from './components/home/CourseDetails';
 import AdminUsers from './pages/admin/AdminUsers';
 
-
 function App() {
   return (
     <Routes>
@@ -33,56 +34,27 @@ function App() {
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
         <Route path="course" element={<Course />} />
+        <Route path="courses" element={<Course />} />
         <Route path="course/:id" element={<CourseDetails />} />
         <Route path="contact" element={<Contact />} />
-        {/* Only accessible if NOT logged in */}
-        <Route 
-          path="login" 
-          element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          } 
-        />
-        <Route 
-          path="register" 
-          element={
-            <PublicRoute>
-              <Register />
-            </PublicRoute>
-          } 
-        />
-        
-        {/* Only accessible if logged in */}
-        <Route 
-          path="profile" 
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          } 
-        />
 
-<Route 
-          path="mycourses" 
-          element={
-            <ProtectedRoute>
-              <Mycourses/>
-            </ProtectedRoute>
-          } 
-        />
-        
+        <Route path="login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="register" element={<PublicRoute><Register /></PublicRoute>} />
+
+        <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="mycourses" element={<ProtectedRoute><Mycourses /></ProtectedRoute>} />
       </Route>
 
-      {/* Admin Routes with Admin Layout */}
+      {/* Admin Routes */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
-        <Route path='course' element={<AdminCourses />} />
-        <Route path='contact' element={<AdminContacts />} />
-        <Route path='users' element={<AdminUsers />} />
-
+        <Route path="course" element={<AdminCourses />} />
+        <Route path="categories" element={<AdminCategories />} />
+        <Route path="contact" element={<AdminContacts />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="enrollments" element={<AdminEnrollments />} />
       </Route>
-      
+
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

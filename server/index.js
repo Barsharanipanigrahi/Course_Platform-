@@ -8,7 +8,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 app.use(cors());
 app.use(express.json());
@@ -20,18 +20,20 @@ const ContactRoutes = require('./route/contactRoute');
 const CoursesRoutes = require('./route/courseRoutes');
 const enrollmentRoutes = require('./route/enrollmentRoutes');
 const userRoutes = require('./route/userRoutes');
+const catagoryRoutes = require('./route/categoryRoutes');
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/Contact', ContactRoutes);
-app.use('/api/course',CoursesRoutes );
+app.use('/api/course', CoursesRoutes);
 app.use("/api/enrollment", enrollmentRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/category", catagoryRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-app.listen(PORT, () => {
+app.listen(8000, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -12,8 +12,12 @@ const userSchema = new mongoose.Schema({
     message: {
         type: String,
     },
+    isRead: {
+        type: Boolean,
+        default: false
+    }
 },
-{ timestamps: true },
+    { timestamps: true },
 );
 
 module.exports = mongoose.model('Contact', userSchema);

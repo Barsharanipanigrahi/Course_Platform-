@@ -2,46 +2,51 @@ const Courses = require("../model/Courses");
 
 const AddCourses = async (req, res) => {
   try {
-    const courses = await Courses.create(req.body)
+    const courses = await Courses.create(req.body);
+
+    // Populate category so the response includes full category object
+    await courses.populate("category");
 
     return res.json({
-      message: "sucess",
+      message: "success",
       Courses: courses,
-      status: true
+      status: true,
     });
   } catch (err) {
+    console.log(err);
     return res.json({
-      message: "Error while create courses",
+      message: "Error while creating course",
       status: false,
     });
   }
 };
+
 const GetCourses = async (req, res) => {
   try {
-    const xyz = await Courses.find()
+    // Populate category on every fetch so frontend gets name + color
+    const xyz = await Courses.find().populate("category");
+
     return res.json({
       message: "lets get courses",
       courses: xyz,
       status: true,
     });
   } catch (err) {
-    console.log(err)
-
+    console.log(err);
     return res.json({
       message: "error while fetch",
       status: false,
-    })
-
+    });
   }
+};
 
-}
 const UpdateCourses = async (req, res) => {
   try {
     const updated = await Courses.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
-    );
+    ).populate("category"); // ← populate so response is consistent
 
     return res.json({
       message: "Update Courses",
@@ -59,18 +64,17 @@ const UpdateCourses = async (req, res) => {
 
 const DeleteCourses = async (req, res) => {
   try {
-    const DeleteCourses = await Courses.findByIdAndDelete(req.params.id)
+    await Courses.findByIdAndDelete(req.params.id);
     return res.json({
       message: "Delete Courses",
-      status: true
-    })
-
+      status: true,
+    });
   } catch (err) {
     console.log(err);
     return res.json({
       message: "error while delete",
       status: false,
-    })
+    });
   }
 };
 

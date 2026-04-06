@@ -6,8 +6,16 @@ const courseSchema = new mongoose.Schema({
     required: true
   },
   description: String,
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    default: null,
+  },
+  duration: {
+    type: String,
+  },
   price: Number,
-
 }, { timestamps: true });
+  
 
 module.exports = mongoose.model("Course", courseSchema);

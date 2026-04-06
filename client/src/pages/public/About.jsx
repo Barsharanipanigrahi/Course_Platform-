@@ -1,4 +1,5 @@
 import { Rocket, Target, Star, GraduationCap, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const About = () => (
   <>
@@ -71,7 +72,7 @@ const About = () => (
             <div>
               <div className="ab-sec-lbl">Our Story</div>
               <h2 className="ab-sec-ttl">Who We Are</h2>
-              <p className="ab-txt"><strong>EduLearn</strong> is a next-generation online learning system designed to simplify course discovery, enrollment, and progress tracking.</p>
+              <p className="ab-txt"><strong>Learnify</strong> is a next-generation online learning system designed to simplify course discovery, enrollment, and progress tracking.</p>
               <p className="ab-txt">Our focus is on practical learning, real-world skills, and a seamless experience for both <strong>students and educators.</strong></p>
             </div>
             <div className="ab-card-dark">
@@ -128,10 +129,12 @@ const About = () => (
         <div className="ab-cta-in">
           <h2 className="ab-cta-title">Learn. Build. <span>Grow.</span></h2>
           <p className="ab-cta-sub">Join us and take the next step in your learning journey.</p>
-          <a href="/register" className="ab-cta-btn">Start Learning Free <ArrowRight size={14}/></a>
+          {/* ✅ Changed from href="/register" to Link to="/courses" */}
+          <Link to="/courses" className="ab-cta-btn">Start Learning <ArrowRight size={14}/></Link>
         </div>
       </section>
     </div>
   </>
 );
+
 export default About;

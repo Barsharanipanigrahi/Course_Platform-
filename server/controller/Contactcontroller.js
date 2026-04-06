@@ -2,34 +2,45 @@ const Contact = require("../model/Contact");
 
 const AddContact = async (req, res) => {
   try {
-    const contact = await Contact.create(req.body)
+    const { name, email, phone, message } = req.body;
 
+    // Basic validation
+    if (!name || !email || !message) {
+      return res.json({
+        message: "Name, email and message are required.",
+        status: false,
+      });
+    }
+
+    const contact = await Contact.create({ name, email, phone, message });
 
     return res.json({
-      message: "success",
+      message: "Message sent successfully!",
       Contact: contact,
-      status: true
+      status: true,
     });
   } catch (err) {
+    console.log("AddContact error:", err);
     return res.json({
-      message: "Error while create contact",
+      message: "Error while creating contact",
       status: false,
     });
   }
 };
+
 const GetContact = async (req, res) => {
   try {
-    const contacts = await Contact.find();
+    const contacts = await Contact.find().sort({ createdAt: -1 }); // newest first
 
     return res.json({
-      message: "lets get contact",
-      Contacts: contacts,   // ✅ plural
-      status: true
+      message: "Contacts fetched",
+      Contacts: contacts,
+      status: true,
     });
   } catch (err) {
-    console.log(err);
+    console.log("GetContact error:", err);
     return res.json({
-      message: "error while fetch",
+      message: "Error while fetching contacts",
       status: false,
     });
   }
@@ -37,42 +48,35 @@ const GetContact = async (req, res) => {
 
 const UpdateContact = async (req, res) => {
   try {
-    const UpdateContact = await Contact.findByIdAndUpdate(req.params.id, req.body)
+    const updated = await Contact.findByIdAndUpdate(req.params.id, req.body, { new: true });
     return res.json({
-      message: "updated contact",
+      message: "Contact updated",
       status: true,
-      UpdateContact
-      // id :req.param.id
-    })
+      UpdateContact: updated,
+    });
   } catch (err) {
-    console.log(err)
-
+    console.log("UpdateContact error:", err);
     return res.json({
-      message: "error while update",
-
-    })
+      message: "Error while updating contact",
+      status: false,
+    });
   }
-}
+};
+
 const DeleteContact = async (req, res) => {
   try {
-    const DeleteContact = await Contact.findByIdAndDelete(req.params.id)
+    await Contact.findByIdAndDelete(req.params.id);
     return res.json({
-      message: "deleted contact",
-      status: true
-    })
-
+      message: "Contact deleted",
+      status: true,
+    });
   } catch (err) {
-    console.log(err);
+    console.log("DeleteContact error:", err);
     return res.json({
-      message: "error while delete",
+      message: "Error while deleting contact",
       status: false,
-    })
+    });
   }
 };
 
-module.exports = {
-  AddContact,
-  GetContact,
-  UpdateContact,
-  DeleteContact,
-};
+module.exports = { AddContact, GetContact, UpdateContact, DeleteContact };

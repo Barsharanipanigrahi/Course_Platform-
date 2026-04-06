@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -7,6 +8,7 @@ import {
 
 const Home = () => {
   const { user } = useAuth();
+  const [activeFilter, setActiveFilter] = useState("All");
 
   const services = [
     { icon: <GraduationCap size={22}/>, title: "Online Learning",     desc: "Flexible learning with structured and guided courses." },
@@ -18,14 +20,33 @@ const Home = () => {
   ];
 
   const courses = [
-    { name: "Web Development",      icon: <Code size={18}/>,     tag: "Popular"  },
-    { name: "React & Frontend",     icon: <Braces size={18}/>,   tag: "Trending" },
-    { name: "Backend with Node.js", icon: <Cpu size={18}/>,      tag: "Hot"      },
-    { name: "Database & SQL",       icon: <Database size={18}/>, tag: null       },
-    { name: "Java Programming",     icon: <Cpu size={18}/>,      tag: null       },
-    { name: "Python Programming",   icon: <Cpu size={18}/>,      tag: "Popular"  },
-    { name: "UI / UX Design",       icon: <Palette size={18}/>,  tag: "New"      },
-    { name: "Data Structures",      icon: <Braces size={18}/>,   tag: null       },
+    { name: "Web Development",  icon: <Code size={18}/>,     tag: "Beginner",     prof: "Dr. Arjun Mehta"   },
+    { name: "Programming",      icon: <Braces size={18}/>,   tag: "Beginner",     prof: "Prof. Sneha Iyer"  },
+    { name: "Data Science",     icon: <Cpu size={18}/>,      tag: "Advanced",     prof: "Dr. Rohan Verma"   },
+    { name: "Cybersecurity",    icon: <Database size={18}/>, tag: "Intermediate", prof: "Prof. Kiran Das"   },
+    { name: "Cloud Computing",  icon: <Cpu size={18}/>,      tag: "Intermediate", prof: "Dr. Priya Nair"    },
+    { name: "DevOps",           icon: <Cpu size={18}/>,      tag: "Advanced",     prof: "Prof. Amit Sharma" },
+    { name: "UI / UX Design",   icon: <Palette size={18}/>,  tag: "Beginner",     prof: "Dr. Meera Pillai"  },
+  ];
+
+  const filters = ["All", "Beginner", "Intermediate", "Advanced"];
+
+  const filteredCourses =
+    activeFilter === "All"
+      ? courses
+      : courses.filter((c) => c.tag === activeFilter);
+
+  const tagColors = {
+    Beginner:     { bg: "rgba(45,212,191,0.15)",  color: "#2dd4bf"  },
+    Intermediate: { bg: "rgba(249,115,22,0.15)",  color: "#f97316"  },
+    Advanced:     { bg: "rgba(220,38,38,0.15)",   color: "#f87171"  },
+  };
+
+  const statsData = [
+    { num: "10K+", lbl: "Students Enrolled" },
+    { num: "120+", lbl: "Expert Courses" },
+    { num: "50+",  lbl: "Industry Mentors" },
+    { num: "95%",  lbl: "Completion Rate" },
   ];
 
   return (
@@ -35,43 +56,43 @@ const Home = () => {
         .hm{font-family:'DM Sans',sans-serif;}
 
         /* ── HERO ── */
-        .hm-hero{background:#0f2027;padding:7rem 1.5rem 5.5rem;position:relative;overflow:hidden;}
-        .hm-hero-grid{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(249,115,22,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,0.04) 1px,transparent 1px);background-size:52px 52px;}
-        .hm-hero-g1{position:absolute;z-index:0;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(249,115,22,0.12),transparent 65%);top:-140px;right:-100px;animation:hm-pulse 8s ease-in-out infinite;}
-        .hm-hero-g2{position:absolute;z-index:0;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(45,212,191,0.08),transparent 65%);bottom:-80px;left:-80px;animation:hm-pulse 8s 4s ease-in-out infinite;}
-        @keyframes hm-pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.1);opacity:0.7;}}
+        .hm-hero{background:#0f2027;padding:7rem 1.5rem 5.5rem;text-align:center;position:relative;overflow:hidden;}
+        .hm-hero-bg{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(249,115,22,0.05) 1px,transparent 1px);background-size:28px 28px;}
+        .hm-hero-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(249,115,22,0.1),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);}
+        .hm-hero-in{position:relative;z-index:1;max-width:680px;margin:0 auto;}
         @keyframes hm-up{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
-
-        .hm-hero-in{position:relative;z-index:1;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 390px;gap:4rem;align-items:center;}
-        @media(max-width:900px){.hm-hero-in{grid-template-columns:1fr;gap:2.5rem;}}
-
-        .hm-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.3);color:#fdba74;padding:5px 15px;border-radius:100px;font-size:0.73rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:1.6rem;animation:hm-up 0.5s ease both;}
-        .hm-badge-dot{width:6px;height:6px;border-radius:50%;background:#f97316;}
-        .hm-title{font-family:'Playfair Display',serif;font-size:clamp(3rem,6vw,4.8rem);font-weight:900;line-height:1.06;color:#fff;margin-bottom:1.3rem;animation:hm-up 0.5s 0.1s ease both;}
+        .hm-lbl{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#f97316;margin-bottom:0.8rem;animation:hm-up 0.5s ease both;}
+        .hm-title{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,4.4rem);font-weight:900;line-height:1.06;color:#fff;margin-bottom:1.2rem;animation:hm-up 0.5s 0.1s ease both;}
         .hm-title span{color:#f97316;display:block;}
-        .hm-sub{font-size:1.02rem;color:rgba(255,255,255,0.5);line-height:1.75;max-width:460px;margin-bottom:2.2rem;animation:hm-up 0.5s 0.2s ease both;}
-        .hm-btns{display:flex;gap:12px;flex-wrap:wrap;animation:hm-up 0.5s 0.3s ease both;}
-
+        .hm-sub{font-size:1rem;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:2.2rem;animation:hm-up 0.5s 0.2s ease both;}
+        .hm-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:hm-up 0.5s 0.3s ease both;}
         .hm-btn-p{display:inline-flex;align-items:center;gap:8px;background:#f97316;color:#fff;padding:12px 24px;border-radius:9px;font-weight:700;font-size:0.9rem;text-decoration:none;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 18px rgba(249,115,22,0.45);font-family:'DM Sans',sans-serif;}
         .hm-btn-p:hover{background:#ea6c0a;transform:translateY(-2px);box-shadow:0 8px 26px rgba(249,115,22,0.55);}
         .hm-btn-g{display:inline-flex;align-items:center;gap:8px;background:transparent;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.2);padding:12px 24px;border-radius:9px;font-weight:500;font-size:0.9rem;text-decoration:none;cursor:pointer;transition:background 0.2s,border-color 0.2s;font-family:'DM Sans',sans-serif;}
         .hm-btn-g:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.35);}
 
-        /* ── WHY CARD ── */
-        .hm-why{background:#134e4a;border:1px solid rgba(45,212,191,0.25);border-radius:18px;padding:1.8rem;position:relative;overflow:hidden;animation:hm-up 0.5s 0.15s ease both;}
-        .hm-why::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#2dd4bf;}
-        .hm-why-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:1.3rem;}
-        .hm-why-row{display:flex;align-items:center;gap:11px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.55);font-size:0.88rem;transition:color 0.2s;}
-        .hm-why-row:last-child{border-bottom:none;}
-        .hm-why-row:hover{color:#fff;}
-        .hm-why-ic{width:30px;height:30px;flex-shrink:0;background:rgba(45,212,191,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#2dd4bf;}
+        /* ── WHY CHOOSE US ── */
+        .hm-why-section{position:relative;padding:8rem 1.5rem;overflow:hidden;background:#0f2027;display:flex;align-items:center;}
+        .hm-why-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+        .hm-why-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(15,32,39,0.9) 30%,rgba(15,32,39,0.4));z-index:1;}
+        .hm-why-content{position:relative;z-index:2;max-width:1200px;margin:0 auto;width:100%;}
+        .hm-why-text-wrapper{max-width:550px;background:transparent;}
+        .hm-why-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:800;color:#fff;margin-bottom:2.5rem;text-shadow:0 2px 10px rgba(0,0,0,0.3);}
+        .hm-why-list{display:flex;flex-direction:column;gap:1.2rem;}
+        .hm-why-row{display:flex;align-items:center;gap:18px;color:rgba(255,255,255,0.9);font-size:1.1rem;font-weight:500;transition:transform 0.2s ease;}
+        .hm-why-row:hover{transform:translateX(8px);color:#f97316;}
+        .hm-why-ic{color:#f97316;flex-shrink:0;display:flex;align-items:center;}
+        @media(max-width:768px){.hm-why-overlay{background:rgba(15,32,39,0.8);}.hm-why-text-wrapper{text-align:center;margin:0 auto;}.hm-why-row{justify-content:center;}}
 
         /* ── STATS ── */
-        .hm-stats{background:#0a2e2b;border-top:1px solid rgba(45,212,191,0.18);border-bottom:1px solid rgba(45,212,191,0.18);padding:1.8rem 1.5rem;}
-        .hm-stats-in{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center;}
-        @media(max-width:600px){.hm-stats-in{grid-template-columns:repeat(2,1fr);}}
-        .hm-stat-n{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:#f97316;}
-        .hm-stat-l{font-size:0.7rem;color:#2dd4bf;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+        .hm-stats{background:#0a2e2b;border-top:1px solid rgba(45,212,191,0.18);border-bottom:1px solid rgba(45,212,191,0.18);padding:2rem 0;overflow:hidden;}
+        .hm-stats-track{display:flex;gap:0;width:max-content;animation:statsScroll 18s linear infinite;}
+        .hm-stats-track:hover{animation-play-state:paused;}
+        .hm-stat-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:220px;padding:0.5rem 1rem;border-right:1px solid rgba(45,212,191,0.15);flex-shrink:0;transition:transform 0.3s ease;}
+        .hm-stat-item:hover{transform:scale(1.08);}
+        .hm-stat-n{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:#f97316;line-height:1.1;}
+        .hm-stat-l{font-size:0.72rem;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:0.1em;margin-top:5px;opacity:0.85;}
+        @keyframes statsScroll{0%{transform:translateX(0);}100%{transform:translateX(-25%);}}
 
         /* ── SECTIONS ── */
         .hm-sec{padding:5rem 1.5rem;}
@@ -96,14 +117,18 @@ const Home = () => {
         .hm-svc-desc{color:rgba(255,255,255,0.5);font-size:0.85rem;line-height:1.6;}
 
         /* ── COURSES ── */
+        .hm-filter-bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:2rem;}
         .hm-crs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
         @media(max-width:800px){.hm-crs-grid{grid-template-columns:repeat(2,1fr);}}
-        .hm-crs-card{background:#134e4a;border:1px solid rgba(45,212,191,0.15);border-radius:13px;padding:1.3rem 1rem;text-align:center;position:relative;transition:transform 0.2s,box-shadow 0.2s,background 0.2s;cursor:pointer;}
+        .hm-crs-card{background:#134e4a;border:1px solid rgba(45,212,191,0.15);border-radius:13px;padding:1.3rem 1rem;text-align:center;transition:transform 0.2s,box-shadow 0.2s,background 0.2s;cursor:pointer;}
         .hm-crs-card:hover{background:#0d3d39;transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
         .hm-crs-ic{width:42px;height:42px;background:rgba(249,115,22,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#f97316;margin:0 auto 0.75rem;transition:background 0.2s;}
         .hm-crs-card:hover .hm-crs-ic{background:rgba(249,115,22,0.22);}
-        .hm-crs-name{font-weight:700;font-size:0.85rem;color:#f0fdfa;}
-        .hm-crs-tag{position:absolute;top:9px;right:9px;font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:100px;background:#f97316;color:#fff;letter-spacing:0.04em;text-transform:uppercase;}
+        .hm-crs-name{font-weight:700;font-size:0.85rem;color:#f0fdfa;margin-bottom:0.5rem;}
+        .hm-crs-tag{display:inline-block;font-size:0.62rem;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:0.04em;text-transform:uppercase;margin-top:4px;}
+        .hm-crs-prof {margin-top: 10px;font-size: 0.72rem;color: #f0fdfa; font-weight: 700; display: flex;align-items: center;justify-content: center;gap: 5px;border-top: 1px solid rgba(45,212,191,0.15);
+        padding-top: 10px;letter-spacing: 0.03em;text-shadow: 0 0 10px rgba(45,212,191,0.4);  }
+        .hm-crs-prof-dot { width: 5px; height: 5px; border-radius: 50%; background: #2dd4bf; flex-shrink: 0;}
 
         /* ── CTA ── */
         .hm-cta-dot{position:absolute;background-image:radial-gradient(circle,rgba(249,115,22,0.1) 1px,transparent 1px);background-size:22px 22px;inset:0;}
@@ -112,56 +137,81 @@ const Home = () => {
         .hm-cta-title span{color:#f97316;}
         .hm-cta-sub{color:rgba(255,255,255,0.55);font-size:0.98rem;line-height:1.75;margin-bottom:2rem;}
         .hm-cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+        .hm-empty{text-align:center;padding:3rem 1rem;color:rgba(255,255,255,0.35);font-size:0.9rem;}
       `}</style>
 
       <div className="hm">
+
+        {/* ── HERO ── */}
         <section className="hm-hero">
-          <div className="hm-hero-grid"/><div className="hm-hero-g1"/><div className="hm-hero-g2"/>
+          <div className="hm-hero-bg"/>
+          <div className="hm-hero-glow"/>
           <div className="hm-hero-in">
-            <div>
-              <div className="hm-badge"><span className="hm-badge-dot"/>Your Learning Journey Starts Here</div>
-              <h1 className="hm-title">Learn Skills.<span>Build Your Career.</span></h1>
-              <p className="hm-sub">A modern online course platform to explore, enroll, and master in-demand tech skills with expert guidance.</p>
-              <div className="hm-btns">
-                {user ? (
-                  <Link to="/courses" className="hm-btn-p">Browse Courses <ArrowRight size={15}/></Link>
-                ) : (
-                  <>
-                    <Link to="/register" className="hm-btn-p">Get Started Free <ArrowRight size={15}/></Link>
-                    <Link to="/login" className="hm-btn-g">Login</Link>
-                  </>
-                )}
-              </div>
+            <div className="hm-lbl">Your Learning Journey Starts Here</div>
+            <h1 className="hm-title">Learn Skills.<span>Build Your Career.</span></h1>
+            <p className="hm-sub">A modern online course platform to explore, enroll, and master in-demand tech skills with expert guidance.</p>
+            <div className="hm-btns">
+              {user ? (
+                <Link to="/courses" className="hm-btn-p">Browse Courses <ArrowRight size={15}/></Link>
+              ) : (
+                <>
+                  <Link to="/register" className="hm-btn-p">Get Started Free <ArrowRight size={15}/></Link>
+                  <Link to="/login" className="hm-btn-g">Login</Link>
+                </>
+              )}
             </div>
-            <div className="hm-why">
+          </div>
+        </section>
+
+        {/* ── WHY CHOOSE US ── */}
+        <section className="hm-why-section">
+          <img
+            className="hm-why-bg-img"
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80"
+            alt="Students learning background"
+          />
+          <div className="hm-why-overlay" />
+          <div className="hm-why-content">
+            <div className="hm-why-card">
               <div className="hm-why-title">Why Choose Us?</div>
               {[
-                {icon:<GraduationCap size={14}/>,text:"Industry-focused curriculum"},
-                {icon:<Users size={14}/>,text:"Expert instructors & mentors"},
-                {icon:<BadgeCheck size={14}/>,text:"Certification after completion"},
-                {icon:<BookOpen size={14}/>,text:"Skill-based course tracks"},
-                {icon:<MonitorPlay size={14}/>,text:"Interactive live classes"},
-                {icon:<Briefcase size={14}/>,text:"Career support & guidance"},
-              ].map((it,i)=>(
-                <div className="hm-why-row" key={i}><span className="hm-why-ic">{it.icon}</span>{it.text}</div>
+                { icon: <GraduationCap size={16}/>, text: "Industry-focused curriculum"     },
+                { icon: <Users size={16}/>,         text: "Expert instructors & mentors"    },
+                { icon: <BadgeCheck size={16}/>,    text: "Certification after completion"  },
+                { icon: <BookOpen size={16}/>,      text: "Skill-based course tracks"       },
+                { icon: <MonitorPlay size={16}/>,   text: "Interactive live classes"        },
+                { icon: <Briefcase size={16}/>,     text: "Career support & guidance"       },
+              ].map((it, i) => (
+                <div className="hm-why-row" key={i}>
+                  <span className="hm-why-ic">{it.icon}</span>
+                  {it.text}
+                </div>
               ))}
             </div>
           </div>
         </section>
 
+        {/* ── STATS ── */}
         <div className="hm-stats">
-          <div className="hm-stats-in">
-            {[{num:"10K+",lbl:"Students Enrolled"},{num:"120+",lbl:"Expert Courses"},{num:"50+",lbl:"Industry Mentors"},{num:"95%",lbl:"Completion Rate"}].map((s,i)=>(
-              <div key={i}><div className="hm-stat-n">{s.num}</div><div className="hm-stat-l">{s.lbl}</div></div>
+          <div className="hm-stats-track">
+            {[...statsData, ...statsData, ...statsData, ...statsData].map((s, i) => (
+              <div className="hm-stat-item" key={i}>
+                <div className="hm-stat-n">{s.num}</div>
+                <div className="hm-stat-l">{s.lbl}</div>
+              </div>
             ))}
           </div>
         </div>
 
+        {/* ── SERVICES ── */}
         <section className="hm-sec hm-sec-light">
           <div className="hm-sec-in">
-            <div className="hm-sec-hd"><div className="hm-sec-lbl">What We Offer</div><h2 className="hm-sec-ttl">Our Services</h2></div>
+            <div className="hm-sec-hd">
+              <div className="hm-sec-lbl">What We Offer</div>
+              <h2 className="hm-sec-ttl">Our Services</h2>
+            </div>
             <div className="hm-svc-grid">
-              {services.map((it,i)=>(
+              {services.map((it, i) => (
                 <div className="hm-svc-card" key={i}>
                   <div className="hm-svc-ic">{it.icon}</div>
                   <div className="hm-svc-title">{it.title}</div>
@@ -172,22 +222,68 @@ const Home = () => {
           </div>
         </section>
 
+        {/* ── COURSES WITH FILTER ── */}
         <section className="hm-sec hm-sec-dark">
           <div className="hm-sec-in">
-            <div className="hm-sec-hd"><div className="hm-sec-lbl-lt">Explore Programs</div><h2 className="hm-sec-ttl-lt">Courses Offered</h2></div>
-            <div className="hm-crs-grid">
-              {courses.map((c,i)=>(
-                <div className="hm-crs-card" key={i}>
-                  {c.tag&&<span className="hm-crs-tag">{c.tag}</span>}
-                  <div className="hm-crs-ic">{c.icon}</div>
-                  <div className="hm-crs-name">{c.name}</div>
-                </div>
+            <div className="hm-sec-hd">
+              <div className="hm-sec-lbl-lt">Explore Programs</div>
+              <h2 className="hm-sec-ttl-lt">Courses Offered</h2>
+            </div>
+            <div className="hm-filter-bar">
+              {filters.map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setActiveFilter(f)}
+                  style={{
+                    padding: "7px 20px",
+                    borderRadius: "100px",
+                    fontSize: "0.82rem",
+                    fontWeight: 700,
+                    fontFamily: "'DM Sans', sans-serif",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    border: activeFilter === f ? "1px solid #f97316" : "1px solid rgba(45,212,191,0.3)",
+                    background: activeFilter === f ? "#f97316" : "transparent",
+                    color: activeFilter === f ? "#fff" : "rgba(255,255,255,0.5)",
+                    boxShadow: activeFilter === f ? "0 4px 14px rgba(249,115,22,0.4)" : "none",
+                  }}
+                >
+                  {f}
+                </button>
               ))}
             </div>
+
+            {filteredCourses.length > 0 ? (
+              <div className="hm-crs-grid">
+                {filteredCourses.map((c, i) => (
+                  <div className="hm-crs-card" key={i}>
+                    <div className="hm-crs-ic">{c.icon}</div>
+                    <div className="hm-crs-name">{c.name}</div>
+                    {c.tag && (
+                      <span
+                        className="hm-crs-tag"
+                        style={{ background: tagColors[c.tag]?.bg, color: tagColors[c.tag]?.color }}
+                      >
+                        {c.tag}
+                      </span>
+                    )}
+                    {c.prof && (
+                      <div className="hm-crs-prof">
+                        <span className="hm-crs-prof-dot" />
+                        {c.prof}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="hm-empty">No courses found for this filter.</div>
+            )}
           </div>
         </section>
 
-        <section className="hm-sec hm-sec-cta" style={{position:'relative',overflow:'hidden'}}>
+        {/* ── CTA ── */}
+        <section className="hm-sec hm-sec-cta" style={{ position: "relative", overflow: "hidden" }}>
           <div className="hm-cta-dot"/>
           <div className="hm-cta-in">
             <h2 className="hm-cta-title">Ready to Start <span>Learning?</span></h2>
@@ -204,8 +300,10 @@ const Home = () => {
             </div>
           </div>
         </section>
+
       </div>
     </>
   );
 };
+
 export default Home;

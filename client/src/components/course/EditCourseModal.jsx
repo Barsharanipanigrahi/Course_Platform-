@@ -1,123 +1,274 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const EditCourseModal = ({ open, onClose, course, onUpdate }) => {
-    const [form, setForm] = useState({
-        title: "",
-        description: "",
-        price: "",
+const LEVELS = ["Beginner", "Intermediate", "Advanced"];
+const TAGS   = ["None", "Popular", "Hot", "Trending", "New"];
+
+const EditCourseModal = ({ open, onClose, course, onUpdate, categories = [] }) => {
+  const [form, setForm] = useState({
+    title: "", description: "", price: "",
+    category: "",duration:"", level: "", tag: "",
+  });
+
+  useEffect(() => {
+    if (course && open) {
+      setForm({
+        _id: course._id,
+        title: course.title || "",
+        description: course.description || "",
+        price: course.price ?? "",
+        category: typeof course.category === "object"
+          ? (course.category?._id || "")
+          : (course.category || ""),
+          duration: course.duration || "",
+        level: course.level || "",
+        tag: course.tag || "",
+         
+      });
+    }
+  }, [course, open]);
+  if (!open || !course) return null;
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const toggle = (field, value) =>
+    setForm(f => ({ ...f, [field]: f[field] === value ? "" : value }));
+
+  const handleUpdate = () => {
+    onUpdate({
+      ...form,
+      price: form.price === "" ? 0 : Number(form.price),
+      tag: form.tag === "None" || form.tag === "" ? null : form.tag,
     });
+  };
 
-    useEffect(() => {
-        if (course) {
-            setForm({
-                _id: course._id,
-                title: course.title || "",
-                description: course.description || "",
-                price: course.price || "",
-            });
-        }
-    }, [course]);
+  const inp = {
+    width: "100%", padding: "10px 13px",
+    background: "#27272a",
+    border: "1.5px solid rgba(255,255,255,0.08)",
+    borderRadius: 9, color: "#fafafa",
+    fontSize: "0.9rem", fontFamily: "'DM Sans',sans-serif",
+    outline: "none", boxSizing: "border-box",
+  };
 
-    if (!open || !course) return null;
+  const focusAmber = (e) => e.target.style.borderColor = "rgba(245,158,11,0.5)";
+  const blurAmber  = (e) => e.target.style.borderColor = "rgba(255,255,255,0.08)";
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+  // Find the currently selected category name for display
+  const selectedCat = categories.find(c => c._id === form.category);
 
-    const handleUpdate = () => {
-        onUpdate(form);
-    };
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+        .ecm-scroll::-webkit-scrollbar{width:4px;}
+        .ecm-scroll::-webkit-scrollbar-track{background:transparent;}
+        .ecm-scroll::-webkit-scrollbar-thumb{background:rgba(245,158,11,0.3);border-radius:4px;}
+        @keyframes ecm-in{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+      `}</style>
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* Backdrop */}
-            <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-                onClick={onClose}
-            />
-
-            {/* Modal Card */}
-            <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 animate-fadeIn">
-                {/* Header */}
-                <div className="mb-5">
-                    <h2 className="text-2xl font-bold text-slate-800">
-                        Edit Course
-                    </h2>
-                    <p className="text-sm text-slate-500">
-                        Update course information
-                    </p>
-                </div>
-
-                {/* Form */}
-                <div className="space-y-4">
-                    {/* Title */}
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                            Course Title
-                        </label>
-                        <input
-                            name="title"
-                            type="text"
-                            value={form.title}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                            Description
-                        </label>
-                        <textarea
-                            name="description"
-                            rows="3"
-                            value={form.description}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                        />
-                    </div>
-
-                    {/* Price */}
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                            Price (₹)
-                        </label>
-                        <input
-                            name="price"
-                            type="number"
-                            value={form.price}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                </div>
-
-                {/* Actions */}
-                <div className="mt-6 flex justify-end gap-3">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 rounded-lg border border-slate-300
-                       text-slate-700 hover:bg-slate-100 transition"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        onClick={handleUpdate}
-                        className="px-5 py-2 rounded-lg bg-green-600
-                       text-white font-semibold hover:bg-green-700
-                       transition shadow-md"
-                    >
-                        Update Course
-                    </button>
-                </div>
+      {/* Overlay */}
+      <div
+        onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}
+      >
+        {/* Modal */}
+        <div
+          className="ecm-scroll"
+          style={{ background: "#1c1c1f", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 18, width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 24px 64px rgba(0,0,0,0.7)", fontFamily: "'DM Sans',sans-serif", animation: "ecm-in 0.2s ease" }}
+        >
+          {/* Header */}
+          <div style={{ padding: "1.3rem 1.6rem", borderBottom: "1px solid rgba(245,158,11,0.1)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: "1.1rem", color: "#fafafa" }}>Edit Course</div>
+              <div style={{ fontSize: "0.78rem", color: "#52525b", marginTop: 2 }}>Update the course details below</div>
             </div>
+            <button onClick={onClose}
+              style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(255,255,255,0.06)", border: "none", cursor: "pointer", color: "#71717a", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center" }}
+              onMouseEnter={e => e.currentTarget.style.color = "#f87171"}
+              onMouseLeave={e => e.currentTarget.style.color = "#71717a"}
+            >✕</button>
+          </div>
+
+          {/* Body */}
+          <div style={{ padding: "1.6rem", display: "flex", flexDirection: "column", gap: "1.1rem" }}>
+
+            {/* Title */}
+            <div>
+              <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#a1a1aa", marginBottom: 6 }}>
+                Course Title <span style={{ color: "#f59e0b" }}>*</span>
+              </label>
+              <input name="title" type="text" placeholder="e.g. Full Stack Web Development"
+                value={form.title} onChange={handleChange}
+                style={inp} onFocus={focusAmber} onBlur={blurAmber}
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#a1a1aa", marginBottom: 6 }}>Description</label>
+              <textarea name="description" rows={3} placeholder="Brief course description..."
+                value={form.description} onChange={handleChange}
+                style={{ ...inp, resize: "vertical", minHeight: 80 }}
+                onFocus={focusAmber} onBlur={blurAmber}
+              />
+            </div>
+
+            {/* Price */}
+            <div>
+              <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#a1a1aa", marginBottom: 6 }}>Price (₹)</label>
+              <input name="price" type="number" placeholder="0"
+                value={form.price} onChange={handleChange}
+                style={inp} onFocus={focusAmber} onBlur={blurAmber}
+              />
+              <label style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 7, cursor: "pointer", width: "fit-content" }}>
+                <input type="checkbox" style={{ accentColor: "#f59e0b", cursor: "pointer" }}
+                  checked={form.price === 0 || form.price === "" || form.price === "0"}
+                  onChange={e => setForm(f => ({ ...f, price: e.target.checked ? 0 : "" }))}
+                />
+                <span style={{ fontSize: "0.78rem", color: "#71717a" }}>Free course</span>
+              </label>
+            </div>
+
+            {/* {duration} */}
+            <div>
+                <label style={{
+                  display:"block", fontSize:"0.72rem", fontWeight:700,
+                  textTransform:"uppercase", letterSpacing:"0.08em",
+                  color:"#a1a1aa", marginBottom:6
+                }}>
+                  Duration
+                </label>
+                <input
+                  name="duration"
+                  type="text"
+                  placeholder="e.g. 3 months / 40 hours"
+                  value={form.duration}
+                  onChange={handleChange}
+                  style={inp}
+                  onFocus={focusAmber}
+                  onBlur={blurAmber}
+                />
+            </div>   
+            {/* Divider */}
+            <div style={{ height: 1, background: "rgba(255,255,255,0.06)" }} />
+
+            {/* Category — from prop */}
+            <div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                <label style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#a1a1aa" }}>
+                  Category
+                  {selectedCat && (
+                    <span style={{ color: "#f59e0b", marginLeft: 8, textTransform: "none", letterSpacing: 0 }}>
+                      ({selectedCat.name})
+                    </span>
+                  )}
+                </label>
+              </div>
+
+              {categories.length === 0 ? (
+                <div style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.15)", borderRadius: 9, padding: "10px 14px", fontSize: "0.82rem", color: "#71717a" }}>
+                  No categories yet.{" "}
+                  <a href="/admin/categories" target="_blank" style={{ color: "#f59e0b", textDecoration: "underline", fontWeight: 600 }}>
+                    Add categories first →
+                  </a>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {categories.map(cat => {
+                    const active = form.category === cat._id;
+                    return (
+                      <button key={cat._id} type="button"
+                        onClick={() => toggle("category", cat._id)}
+                        style={{
+                          display: "flex", alignItems: "center", gap: 6,
+                          padding: "6px 13px", borderRadius: 100,
+                          fontSize: "0.78rem", fontWeight: 600,
+                          cursor: "pointer", transition: "all 0.18s",
+                          fontFamily: "'DM Sans',sans-serif",
+                          border: `1.5px solid ${active ? (cat.color || "#f59e0b") : "rgba(255,255,255,0.1)"}`,
+                          background: active ? `${cat.color || "#f59e0b"}18` : "transparent",
+                          color: active ? (cat.color || "#f59e0b") : "rgba(255,255,255,0.5)",
+                          boxShadow: active ? `0 0 0 3px ${cat.color || "#f59e0b"}18` : "none",
+                        }}
+                      >
+                        <span style={{ fontSize: 13 }}>{cat.icon || "📖"}</span>
+                        {cat.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div style={{ height: 1, background: "rgba(255,255,255,0.06)" }} />
+
+            {/* Level */}
+            <div>
+              <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#a1a1aa", marginBottom: 8 }}>Difficulty Level</label>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {LEVELS.map(lvl => {
+                  const active = form.level === lvl;
+                  const clr = { Beginner: "#22c55e", Intermediate: "#f97316", Advanced: "#ef4444" }[lvl];
+                  return (
+                    <button key={lvl} type="button" onClick={() => toggle("level", lvl)}
+                      style={{
+                        padding: "6px 16px", borderRadius: 100, fontSize: "0.78rem", fontWeight: 600,
+                        cursor: "pointer", transition: "all 0.18s", fontFamily: "'DM Sans',sans-serif",
+                        border: `1.5px solid ${active ? clr : "rgba(255,255,255,0.1)"}`,
+                        background: active ? `${clr}18` : "transparent",
+                        color: active ? clr : "rgba(255,255,255,0.5)",
+                        boxShadow: active ? `0 0 0 3px ${clr}18` : "none",
+                      }}
+                    >{lvl}</button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Tag */}
+            <div>
+              <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#a1a1aa", marginBottom: 8 }}>Badge / Tag</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {TAGS.map(tag => {
+                  const isSelected = (tag === "None" && !form.tag) || form.tag === tag;
+                  const tagClr = { Popular: "#f97316", Hot: "#ef4444", Trending: "#a78bfa", New: "#22c55e" }[tag] || "#f59e0b";
+                  return (
+                    <button key={tag} type="button"
+                      onClick={() => setForm(f => ({ ...f, tag: tag === "None" ? "" : (f.tag === tag ? "" : tag) }))}
+                      style={{
+                        padding: "6px 13px", borderRadius: 100, fontSize: "0.78rem", fontWeight: 600,
+                        cursor: "pointer", transition: "all 0.18s", fontFamily: "'DM Sans',sans-serif",
+                        border: `1.5px solid ${isSelected ? tagClr : "rgba(255,255,255,0.1)"}`,
+                        background: isSelected ? `${tagClr}${tag === "None" ? "0d" : "18"}` : "transparent",
+                        color: isSelected ? tagClr : "rgba(255,255,255,0.5)",
+                        boxShadow: isSelected ? `0 0 0 3px ${tagClr}18` : "none",
+                      }}
+                    >{tag}</button>
+                  );
+                })}
+              </div>
+            </div>
+
+          </div>
+
+          {/* Footer */}
+          <div style={{ padding: "1rem 1.6rem 1.4rem", display: "flex", gap: 10, justifyContent: "flex-end", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+            <button onClick={onClose}
+              style={{ padding: "9px 18px", borderRadius: 9, background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "#a1a1aa", fontSize: "0.86rem", fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans',sans-serif" }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+            >Cancel</button>
+            <button onClick={handleUpdate}
+              style={{ padding: "9px 22px", borderRadius: 9, background: "#f59e0b", color: "#18181b", fontSize: "0.86rem", fontWeight: 700, border: "none", cursor: "pointer", fontFamily: "'DM Sans',sans-serif", boxShadow: "0 4px 16px rgba(245,158,11,0.35)" }}
+              onMouseEnter={e => e.currentTarget.style.background = "#fcd34d"}
+              onMouseLeave={e => e.currentTarget.style.background = "#f59e0b"}
+            >Update Course</button>
+          </div>
+
         </div>
-    );
+      </div>
+    </>
+  );
 };
 
 export default EditCourseModal;
