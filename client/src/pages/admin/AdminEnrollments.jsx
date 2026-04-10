@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ClipboardList, Search, X, BookOpen, Calendar, User, Mail, Award } from "lucide-react";
+import { ClipboardList, Search, X, BookOpen, Calendar, Mail, Award } from "lucide-react";
 import api from "../../services/api";
 
 /* ── Skeleton shimmer ─────────────────────────────────────── */
@@ -44,9 +44,9 @@ const SkeletonCard = () => (
 );
 
 /* ── Student Drawer ───────────────────────────────────────── */
-const StudentDrawer = ({ student, onClose }) => {
-  const [courses, setCourses]   = useState([]);
-  const [loading, setLoading]   = useState(true);
+const StudentDrawer = ({ student, onClose, onStatusChange }) => {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!student) return;
@@ -70,7 +70,29 @@ const StudentDrawer = ({ student, onClose }) => {
 
   const formatDate = (d) => {
     if (!d) return "—";
-    return new Date(d).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    return new Date(d).toLocaleDateString("en-US", {
+      year: "numeric", month: "short", day: "numeric",
+    });
+  };
+
+  const handleDrawerStatusToggle = async (e, course) => {
+    e.stopPropagation();
+    const newStatus = course.status === "active" ? "inactive" : "active";
+    try {
+      const token = localStorage.getItem("token");
+      await api.patch(
+        `/enrollment/${course._id}/status`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setCourses((prev) =>
+        prev.map((c) => c._id === course._id ? { ...c, status: newStatus } : c)
+      );
+      // Sync status back to parent table
+      onStatusChange(course._id, newStatus);
+    } catch (err) {
+      console.error("Status update failed:", err);
+    }
   };
 
   if (!student) return null;
@@ -112,7 +134,10 @@ const StudentDrawer = ({ student, onClose }) => {
         }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
             <div>
-              <p style={{ fontSize: "0.65rem", fontWeight: 700, color: "#f59e0b", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 6 }}>
+              <p style={{
+                fontSize: "0.65rem", fontWeight: 700, color: "#f59e0b",
+                textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 6,
+              }}>
                 Student Dashboard
               </p>
               <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#fafafa", margin: 0 }}>
@@ -151,10 +176,7 @@ const StudentDrawer = ({ student, onClose }) => {
 
           {/* Stats Row */}
           {!loading && (
-            <div style={{
-              display: "grid", gridTemplateColumns: "1fr 1fr",
-              gap: 10, marginTop: 16,
-            }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 16 }}>
               {[
                 { label: "Total Courses", value: courses.length, color: "#f59e0b" },
                 {
@@ -170,7 +192,10 @@ const StudentDrawer = ({ student, onClose }) => {
                   textAlign: "center",
                 }}>
                   <p style={{ fontSize: "1.4rem", fontWeight: 900, color, margin: 0 }}>{value}</p>
-                  <p style={{ fontSize: "0.65rem", color: "#71717a", marginTop: 2, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</p>
+                  <p style={{
+                    fontSize: "0.65rem", color: "#71717a", marginTop: 2,
+                    fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em",
+                  }}>{label}</p>
                 </div>
               ))}
             </div>
@@ -179,7 +204,10 @@ const StudentDrawer = ({ student, onClose }) => {
 
         {/* Course Cards */}
         <div style={{ padding: "1.25rem", display: "flex", flexDirection: "column", gap: 12 }}>
-          <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "#52525b", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>
+          <p style={{
+            fontSize: "0.7rem", fontWeight: 700, color: "#52525b",
+            textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4,
+          }}>
             Enrolled Courses
           </p>
 
@@ -203,15 +231,17 @@ const StudentDrawer = ({ student, onClose }) => {
               const enrolledAt = c.createdAt || c.enrolledAt || null;
 
               return (
-                <div key={c._id || i} style={{
-                  background: "#27272a",
-                  border: `1px solid ${accent}18`,
-                  borderRadius: 12,
-                  padding: "1rem",
-                  position: "relative",
-                  overflow: "hidden",
-                  transition: "border-color 0.2s, transform 0.15s",
-                }}
+                <div
+                  key={c._id || i}
+                  style={{
+                    background: "#27272a",
+                    border: `1px solid ${accent}18`,
+                    borderRadius: 12,
+                    padding: "1rem",
+                    position: "relative",
+                    overflow: "hidden",
+                    transition: "border-color 0.2s, transform 0.15s",
+                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = `${accent}40`;
                     e.currentTarget.style.transform = "translateY(-1px)";
@@ -244,8 +274,7 @@ const StudentDrawer = ({ student, onClose }) => {
                   <p style={{
                     fontSize: "0.9rem", fontWeight: 700,
                     color: "#fafafa", marginBottom: 8,
-                    paddingRight: 32,
-                    lineHeight: 1.3,
+                    paddingRight: 32, lineHeight: 1.3,
                   }}>
                     {title}
                   </p>
@@ -268,20 +297,25 @@ const StudentDrawer = ({ student, onClose }) => {
                     )}
                   </div>
 
-                  {/* Status badge */}
+                  {/* Status toggle badge */}
                   <div style={{ marginTop: 10 }}>
-                    <span style={{
-                      fontSize: "0.62rem", fontWeight: 700,
-                      padding: "3px 10px", borderRadius: 100,
-                      textTransform: "capitalize",
-                      background: status === "active"
-                        ? "rgba(52,211,153,0.12)"
-                        : "rgba(248,113,113,0.12)",
-                      color: status === "active" ? "#34d399" : "#f87171",
-                      border: `1px solid ${status === "active" ? "rgba(52,211,153,0.2)" : "rgba(248,113,113,0.2)"}`,
-                    }}>
+                    <button
+                      onClick={(e) => handleDrawerStatusToggle(e, c)}
+                      title="Click to toggle status"
+                      style={{
+                        fontSize: "0.62rem", fontWeight: 700,
+                        padding: "3px 10px", borderRadius: 100,
+                        textTransform: "capitalize", cursor: "pointer",
+                        background: status === "active"
+                          ? "rgba(52,211,153,0.12)"
+                          : "rgba(248,113,113,0.12)",
+                        color: status === "active" ? "#34d399" : "#f87171",
+                        border: `1px solid ${status === "active" ? "rgba(52,211,153,0.2)" : "rgba(248,113,113,0.2)"}`,
+                        transition: "all 0.2s",
+                      }}
+                    >
                       {status}
-                    </span>
+                    </button>
                   </div>
                 </div>
               );
@@ -297,9 +331,9 @@ const StudentDrawer = ({ student, onClose }) => {
 /*  Main Page                                                 */
 /* ══════════════════════════════════════════════════════════ */
 const AdminEnrollments = () => {
-  const [enrollments, setEnrollments]   = useState([]);
-  const [loading, setLoading]           = useState(true);
-  const [search, setSearch]             = useState("");
+  const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   useEffect(() => {
@@ -346,6 +380,35 @@ const AdminEnrollments = () => {
     fetchAllEnrollments();
   }, []);
 
+  const handleStatusToggle = async (e, enrollment) => {
+    e.stopPropagation();
+    const newStatus = enrollment.status === "active" ? "inactive" : "active";
+    try {
+      const token = localStorage.getItem("token");
+      await api.patch(
+        `/enrollment/${enrollment._id}/status`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEnrollments((prev) =>
+        prev.map((en) =>
+          en._id === enrollment._id ? { ...en, status: newStatus } : en
+        )
+      );
+    } catch (err) {
+      console.error("Status update failed:", err);
+    }
+  };
+
+  // Called from drawer to sync status back to table
+  const handleDrawerStatusSync = (enrollmentId, newStatus) => {
+    setEnrollments((prev) =>
+      prev.map((en) =>
+        en._id === enrollmentId ? { ...en, status: newStatus } : en
+      )
+    );
+  };
+
   const filtered = enrollments.filter((e) =>
     e.userName.toLowerCase().includes(search.toLowerCase()) ||
     e.userEmail.toLowerCase().includes(search.toLowerCase()) ||
@@ -360,7 +423,10 @@ const AdminEnrollments = () => {
   };
 
   return (
-    <div style={{ minHeight: "100vh", padding: "2rem", background: "#18181b", fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{
+      minHeight: "100vh", padding: "2rem",
+      background: "#18181b", fontFamily: "'DM Sans', sans-serif",
+    }}>
       <style>{`
         @keyframes skeletonShimmer {
           0%   { background-position: 200% 0; }
@@ -376,26 +442,38 @@ const AdminEnrollments = () => {
         }
         .enroll-search::placeholder { color: #52525b; }
         .enroll-search:focus { outline: none; border-color: rgba(245,158,11,0.5) !important; }
-        .enroll-tr { transition: background 0.15s, box-shadow 0.15s; cursor: pointer; }
+        .enroll-tr { transition: background 0.15s; cursor: pointer; }
         .enroll-tr:hover { background: rgba(245,158,11,0.06) !important; }
+        .status-btn:hover { filter: brightness(1.2); transform: scale(1.04); }
       `}</style>
 
       {/* ── Header ── */}
       <div style={{ marginBottom: "2rem" }}>
-        <p style={{ fontSize: "0.68rem", fontWeight: 700, color: "#f59e0b", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 4 }}>
+        <p style={{
+          fontSize: "0.68rem", fontWeight: 700, color: "#f59e0b",
+          textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 4,
+        }}>
           Management
         </p>
-        <h1 style={{ fontSize: "1.875rem", fontWeight: 900, color: "#fafafa", display: "flex", alignItems: "center", gap: 10 }}>
+        <h1 style={{
+          fontSize: "1.875rem", fontWeight: 900, color: "#fafafa",
+          display: "flex", alignItems: "center", gap: 10,
+        }}>
           <ClipboardList size={26} style={{ color: "#f59e0b" }} /> Enrollments
         </h1>
         <p style={{ fontSize: "0.8rem", color: "#52525b", marginTop: 4 }}>
-          {loading ? "Loading..." : `${enrollments.length} enrollment${enrollments.length !== 1 ? "s" : ""} total — click any row to view student dashboard`}
+          {loading
+            ? "Loading..."
+            : `${enrollments.length} enrollment${enrollments.length !== 1 ? "s" : ""} total — click any row to view student dashboard`}
         </p>
       </div>
 
       {/* ── Search Bar ── */}
       <div style={{ marginBottom: "1.25rem", position: "relative", maxWidth: 360 }}>
-        <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#52525b", pointerEvents: "none" }} />
+        <Search size={15} style={{
+          position: "absolute", left: 12, top: "50%",
+          transform: "translateY(-50%)", color: "#52525b", pointerEvents: "none",
+        }} />
         <input
           className="enroll-search"
           value={search}
@@ -426,7 +504,10 @@ const AdminEnrollments = () => {
       }}>
         <table style={{ width: "100%", fontSize: "0.875rem", borderCollapse: "collapse" }}>
           <thead>
-            <tr style={{ background: "rgba(245,158,11,0.08)", borderBottom: "1px solid rgba(245,158,11,0.2)" }}>
+            <tr style={{
+              background: "rgba(245,158,11,0.08)",
+              borderBottom: "1px solid rgba(245,158,11,0.2)",
+            }}>
               {["#", "User", "Email", "Course", "Enrolled On", "Status"].map((h) => (
                 <th key={h} style={{
                   padding: "1rem",
@@ -448,7 +529,10 @@ const AdminEnrollments = () => {
               [...Array(6)].map((_, i) => <SkeletonRow key={i} i={i} />)
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ textAlign: "center", padding: "3rem", color: "#52525b", fontSize: "0.9rem" }}>
+                <td colSpan="6" style={{
+                  textAlign: "center", padding: "3rem",
+                  color: "#52525b", fontSize: "0.9rem",
+                }}>
                   {search ? "No results match your search" : "No enrollments found"}
                 </td>
               </tr>
@@ -470,7 +554,7 @@ const AdminEnrollments = () => {
                     {i + 1}
                   </td>
 
-                  {/* User — with avatar initial */}
+                  {/* User */}
                   <td style={{ padding: "1rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <div style={{
@@ -502,20 +586,28 @@ const AdminEnrollments = () => {
                     {formatDate(e.enrolledAt)}
                   </td>
 
-                  {/* Status badge */}
+                  {/* Status Toggle */}
                   <td style={{ padding: "1rem" }}>
-                    <span style={{
-                      fontSize: "0.65rem", fontWeight: 700,
-                      padding: "3px 10px", borderRadius: 100,
-                      textTransform: "capitalize",
-                      background: e.status === "active"
-                        ? "rgba(52,211,153,0.12)"
-                        : "rgba(248,113,113,0.12)",
-                      color: e.status === "active" ? "#34d399" : "#f87171",
-                      border: `1px solid ${e.status === "active" ? "rgba(52,211,153,0.2)" : "rgba(248,113,113,0.2)"}`,
-                    }}>
+                    <button
+                      className="status-btn"
+                      onClick={(ev) => handleStatusToggle(ev, e)}
+                      title={`Click to mark as ${e.status === "active" ? "inactive" : "active"}`}
+                      style={{
+                        fontSize: "0.65rem", fontWeight: 700,
+                        padding: "4px 12px", borderRadius: 100,
+                        textTransform: "capitalize", cursor: "pointer",
+                        background: e.status === "active"
+                          ? "rgba(52,211,153,0.12)"
+                          : "rgba(248,113,113,0.12)",
+                        color: e.status === "active" ? "#34d399" : "#f87171",
+                        border: `1px solid ${e.status === "active"
+                          ? "rgba(52,211,153,0.25)"
+                          : "rgba(248,113,113,0.25)"}`,
+                        transition: "all 0.2s",
+                      }}
+                    >
                       {e.status}
-                    </span>
+                    </button>
                   </td>
                 </tr>
               ))
@@ -528,6 +620,7 @@ const AdminEnrollments = () => {
       <StudentDrawer
         student={selectedStudent}
         onClose={() => setSelectedStudent(null)}
+        onStatusChange={handleDrawerStatusSync}
       />
     </div>
   );

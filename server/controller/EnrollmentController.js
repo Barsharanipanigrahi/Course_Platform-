@@ -1,12 +1,11 @@
 const Enrollment = require("../model/Enrollment");
 
-// BOOK / ENROLL COURSE
+// ENROLL COURSE
 const enrollCourse = async (req, res) => {
     try {
         const { courseId } = req.body;
         const userId = req.user._id;
 
-        // prevent duplicate booking
         const alreadyEnrolled = await Enrollment.findOne({
             user: userId,
             course: courseId,
@@ -40,8 +39,7 @@ const getMyCourses = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const courses = await Enrollment.find({ user: userId })
-            .populate("course");
+        const courses = await Enrollment.find({ user: userId }).populate("course");
 
         res.json({
             status: true,
@@ -58,8 +56,7 @@ const getCoursesByUserId = async (req, res) => {
     try {
         const { userId } = req.params;
 
-        const enrollments = await Enrollment.find({ user: userId })
-            .populate("course");
+        const enrollments = await Enrollment.find({ user: userId }).populate("course");
 
         res.json({
             status: true,
@@ -71,5 +68,46 @@ const getCoursesByUserId = async (req, res) => {
     }
 };
 
+// ADMIN: UPDATE ENROLLMENT STATUS
+const updateEnrollmentStatus = async (req, res) => {
+    try {
+        const { enrollmentId } = req.params;
+        const { status } = req.body;
 
-module.exports = { enrollCourse, getMyCourses, getCoursesByUserId };
+        if (!["active", "inactive"].includes(status)) {
+            return res.status(400).json({
+                status: false,
+                message: "Invalid status. Must be 'active' or 'inactive'",
+            });
+        }
+
+        const enrollment = await Enrollment.findByIdAndUpdate(
+            enrollmentId,
+            { status },
+            { new: true }
+        ).populate("course");
+
+        if (!enrollment) {
+            return res.status(404).json({
+                status: false,
+                message: "Enrollment not found",
+            });
+        }
+
+        res.json({
+            status: true,
+            message: `Enrollment marked as ${status}`,
+            enrollment,
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ status: false });
+    }
+};
+
+module.exports = {
+    enrollCourse,
+    getMyCourses,
+    getCoursesByUserId,
+    updateEnrollmentStatus,
+};
