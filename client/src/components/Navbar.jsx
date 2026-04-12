@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import React, { useState, useEffect } from 'react';
+import { GraduationCap } from "lucide-react";
 
 const NAV_LINKS = [
   { to: '/',        label: 'Home'    },
@@ -43,7 +44,20 @@ const Navbar = () => {
         .nb-logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
         .nb-logo-txt{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:800;color:#fff;letter-spacing:-0.01em;}
         .nb-logo-txt span{color:#f97316;}
+.nb-logo-ic {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(249, 115, 22, 0.4);
+}
 
+.nb-logo-ic svg {
+  color: #111; 
+}
         .nb-links{display:flex;align-items:center;gap:2px;}
         .nb-lnk{position:relative;padding:6px 13px;border-radius:7px;font-size:0.87rem;font-weight:500;text-decoration:none;color:rgba(255,255,255,0.55);transition:color 0.2s,background 0.2s;}
         .nb-lnk:hover{color:#fff;background:rgba(255,255,255,0.07);}
@@ -118,6 +132,7 @@ const Navbar = () => {
       <nav className={`nb${scrolled ? ' sc' : ''}`}>
         <div className="nb-in">
           <Link to="/" className="nb-logo">
+          <div className ="nb-logo-ic"><GraduationCap size={18}/></div>
             <span className="nb-logo-txt">Learn<span>ify</span></span>
           </Link>
 
@@ -165,8 +180,6 @@ const Navbar = () => {
         className={`nb-backdrop${menuOpen ? ' open' : ''}`}
         onClick={() => setMenuOpen(false)}
       />
-
-      {/* ✅ FIXED: inert={true} when closed, undefined when open */}
       <div
         className={`nb-drawer${menuOpen ? ' open' : ''}`}
         inert={!menuOpen || undefined}

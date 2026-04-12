@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   GraduationCap, Users, BadgeCheck, Code, Database,
-  Palette, Braces, Cpu, BookOpen, MonitorPlay, Briefcase, ArrowRight,
+  Palette, Braces, Cpu, BookOpen, MonitorPlay, Briefcase, ArrowRight,Sparkles,
 } from "lucide-react";
 
 const Home = () => {
@@ -55,21 +55,62 @@ const Home = () => {
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap');
         .hm{font-family:'DM Sans',sans-serif;}
 
-        /* ── HERO ── */
+     
+/* ── HERO ── */
         .hm-hero{background:#0f2027;padding:7rem 1.5rem 5.5rem;text-align:center;position:relative;overflow:hidden;}
-        .hm-hero-bg{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(249,115,22,0.05) 1px,transparent 1px);background-size:28px 28px;}
-        .hm-hero-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(249,115,22,0.1),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);}
-        .hm-hero-in{position:relative;z-index:1;max-width:680px;margin:0 auto;}
-        @keyframes hm-up{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
-        .hm-lbl{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#f97316;margin-bottom:0.8rem;animation:hm-up 0.5s ease both;}
-        .hm-title{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,4.4rem);font-weight:900;line-height:1.06;color:#fff;margin-bottom:1.2rem;animation:hm-up 0.5s 0.1s ease both;}
-        .hm-title span{color:#f97316;display:block;}
+        .hm-hero-mesh{
+          position:absolute;inset:0;
+          background-image:
+            radial-gradient(circle at 20% 50%,rgba(45,212,191,0.07) 0%,transparent 50%),
+            radial-gradient(circle at 80% 50%,rgba(249,115,22,0.07) 0%,transparent 50%),
+            radial-gradient(circle,rgba(249,115,22,0.05) 1px,transparent 1px);
+          background-size:100% 100%,100% 100%,28px 28px;
+        }
+        .hm-hero-ring{
+          position:absolute;width:700px;height:700px;border-radius:50%;
+          border:1px solid rgba(45,212,191,0.06);
+          top:50%;left:50%;transform:translate(-50%,-50%);
+          animation:hm-spin 35s linear infinite;pointer-events:none;
+        }
+        .hm-hero-ring2{
+          position:absolute;width:450px;height:450px;border-radius:50%;
+          border:1px solid rgba(249,115,22,0.07);
+          top:50%;left:50%;transform:translate(-50%,-50%);
+          animation:hm-spin 22s linear infinite reverse;pointer-events:none;
+        }
+        .hm-hero-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(249,115,22,0.1),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+        .hm-hero-dot{position:absolute;border-radius:50%;animation:hm-pulse 3s ease-in-out infinite;pointer-events:none;}
+        .hm-hero-in{position:relative;z-index:2;max-width:680px;margin:0 auto;}
+
+        .hm-lbl{
+          display:inline-flex;align-items:center;gap:6px;
+          font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+          color:#f97316;margin-bottom:1rem;
+          background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.25);
+          padding:5px 14px;border-radius:100px;
+          animation:hm-up 0.5s ease both;
+        }
+        .hm-title{
+          font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,4.4rem);
+          font-weight:900;line-height:1.06;color:#fff;margin-bottom:1.2rem;
+          animation:hm-up 0.5s 0.1s ease both;
+        }
+        .hm-title span{
+          color:transparent;
+          background:linear-gradient(135deg,#f97316,#fb923c);
+          -webkit-background-clip:text;background-clip:text;
+          display:block;
+        }
+        .hm-hero-underline{
+          display:block;height:3px;margin:0.5rem auto 0;
+          background:linear-gradient(90deg,#f97316,#2dd4bf);border-radius:2px;
+          width:0;animation:hm-line 1s 0.7s ease both;max-width:60px;
+        }
         .hm-sub{font-size:1rem;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:2.2rem;animation:hm-up 0.5s 0.2s ease both;}
         .hm-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:hm-up 0.5s 0.3s ease both;}
         .hm-btn-p{display:inline-flex;align-items:center;gap:8px;background:#f97316;color:#fff;padding:12px 24px;border-radius:9px;font-weight:700;font-size:0.9rem;text-decoration:none;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 18px rgba(249,115,22,0.45);font-family:'DM Sans',sans-serif;}
         .hm-btn-p:hover{background:#ea6c0a;transform:translateY(-2px);box-shadow:0 8px 26px rgba(249,115,22,0.55);}
         .hm-btn-g{display:inline-flex;align-items:center;gap:8px;background:transparent;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.2);padding:12px 24px;border-radius:9px;font-weight:500;font-size:0.9rem;text-decoration:none;cursor:pointer;transition:background 0.2s,border-color 0.2s;font-family:'DM Sans',sans-serif;}
-        .hm-btn-g:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.35);}
 
         /* ── WHY CHOOSE US ── */
         .hm-why-section{position:relative;padding:8rem 1.5rem;overflow:hidden;background:#0f2027;display:flex;align-items:center;}
@@ -144,11 +185,28 @@ const Home = () => {
 
         {/* ── HERO ── */}
         <section className="hm-hero">
-          <div className="hm-hero-bg"/>
+          <div className="hm-hero-mesh"/>
+          <div className="hm-hero-ring"/><div className="hm-hero-ring2"/>
           <div className="hm-hero-glow"/>
+          {[
+            {top:"18%",left:"9%", size:8, color:"rgba(249,115,22,0.4)",  delay:"0s"  },
+            {top:"72%",left:"6%", size:5, color:"rgba(45,212,191,0.5)",  delay:"1s"  },
+            {top:"22%",right:"8%",size:6, color:"rgba(45,212,191,0.4)",  delay:"0.5s"},
+            {top:"68%",right:"10%",size:9,color:"rgba(249,115,22,0.3)",  delay:"1.5s"},
+          ].map((d,i)=>(
+            <div key={i} className="hm-hero-dot" style={{
+              top:d.top,left:d.left,right:d.right,
+              width:d.size,height:d.size,background:d.color,animationDelay:d.delay,
+            }}/>
+          ))}
+
           <div className="hm-hero-in">
-            <div className="hm-lbl">Your Learning Journey Starts Here</div>
-            <h1 className="hm-title">Learn Skills.<span>Build Your Career.</span></h1>
+            <div className="hm-lbl"><Sparkles size={20}/> Your Learning Journey Starts Here</div>
+            <h1 className="hm-title">
+              Learn Skills.
+              <span>Build Your Career.</span>
+              <span className="hm-hero-underline"/>
+            </h1>
             <p className="hm-sub">A modern online course platform to explore, enroll, and master in-demand tech skills with expert guidance.</p>
             <div className="hm-btns">
               {user ? (

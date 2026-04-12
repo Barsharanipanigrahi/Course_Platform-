@@ -8,29 +8,20 @@ const reviewSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const courseSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true
-  },
+  title: { type: String, required: true },
   description: String,
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
     default: null,
   },
-  duration: {
-    type: String,
-  },
+  duration: { type: String },
   price: Number,
-
- reviews: [reviewSchema],
-    rating: { type: Number, default: 0 },
-    numReviews: { type: Number, default: 0 },
-},
-  
-{ timestamps: true })
-
-
-  
+  level: { type: String, enum: ["Beginner", "Intermediate", "Advanced"], default: null },
+  tag: { type: String, enum: ["Popular", "Hot", "Trending", "New"], default: null },
+  reviews: [reviewSchema],
+  rating: { type: Number, default: 0 },
+  numReviews: { type: Number, default: 0 },
+}, { timestamps: true });
 
 module.exports = mongoose.model("Course", courseSchema);

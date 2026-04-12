@@ -5,6 +5,18 @@ import { Linkedin, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
 
+// ── Category names here MUST exactly match your DB category `name` field ──
+// Check your DB / backend /category/get response and adjust this list if needed.
+const FOOTER_COURSES = [
+  { cat: "Cloud Computing",      label: "Cloud Computing"    },
+  { cat: "Cybersecurity",        label: "Cybersecurity"      },
+  { cat: "Data Science",         label: "Data Science"       },
+  { cat: "DevOPs & Automation",  label: "DevOps & Automation"},
+  { cat: "Programming",          label: "Programming"        },
+  { cat: "UI/UX Design",         label: "UI/UX Design"       },
+  { cat: "Web Development",      label: "Web Development"    },
+];
+
 const Footer = () => {
   const { user } = useAuth();
   return (
@@ -36,7 +48,7 @@ const Footer = () => {
         .ft-soc-li{background:rgba(45,212,191,0.1);color:#2dd4bf;}
         .ft-soc-gh{background:rgba(45,212,191,0.1);color:#2dd4bf;}
         .ft-col-title{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f97316;margin-bottom:1.1rem;}
-        .ft-links{list-style:none;display:flex;flex-direction:column;gap:9px;}
+        .ft-links{list-style:none;display:flex;flex-direction:column;gap:9px;padding:0;margin:0;}
         .ft-lnk{font-size:0.85rem;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s;display:flex;align-items:center;gap:6px;}
         .ft-lnk:hover{color:#fff;}
         .ft-lnk-dot{width:3px;height:3px;border-radius:50%;background:rgba(45,212,191,0.35);flex-shrink:0;}
@@ -60,41 +72,64 @@ const Footer = () => {
             {!user && <Link to="/register" className="ft-cta-btn">Create Free Account <ArrowRight size={14}/></Link>}
           </div>
         </div>
+
         <div className="ft-body">
           <div className="ft-body-in">
+
+            {/* Brand */}
             <div>
               <div className="ft-brand-logo">Lern<span>ify</span></div>
               <p className="ft-brand-desc">An online learning platform helping students grow their skills, earn certifications, and build better careers.</p>
-            </div>
-            <div>
-              <div className="ft-col-title">Quick Links</div>
               <div className="ft-socials">
                 <a href="https://wa.me/916372301256" target="_blank" rel="noreferrer" className="ft-soc ft-soc-wa"><FaWhatsapp /></a>
                 <a href="https://www.linkedin.com" target="_blank" rel="noreferrer" className="ft-soc ft-soc-li"><Linkedin size={14}/></a>
                 <a href="https://github.com/Barsharanipanigrahi" target="_blank" rel="noreferrer" className="ft-soc ft-soc-gh"><FaGithub size={14}/></a>
               </div>
             </div>
+
+            {/* Quick Links – placeholder col (add your own links here) */}
+            <div>
+              <div className="ft-col-title">Quick Links</div>
+              <ul className="ft-links">
+                <li><Link to="/home"         className="ft-lnk"><span className="ft-lnk-dot"/>Home</Link></li>
+                <li><Link to="/courses"  className="ft-lnk"><span className="ft-lnk-dot"/>All Courses</Link></li>
+                <li><Link to="/about"    className="ft-lnk"><span className="ft-lnk-dot"/>About</Link></li>
+                <li><Link to="/contact"  className="ft-lnk"><span className="ft-lnk-dot"/>Contact</Link></li>
+              </ul>
+            </div>
+
+            {/* Courses – category filter links */}
             <div>
               <div className="ft-col-title">Courses</div>
               <ul className="ft-links">
-                {[
-                  ['Computer Science','Computer Science'],
-                  ['Data Science','Data Science'],
-                  ['Mathematics','Mathematics'],
-                  ['Electronics','Electronics'],
-                  ['Design & UX','Design & UX'],
-                ].map(([cat,label])=>(
-                  <li key={cat}><Link to={`/courses?category=${encodeURIComponent(cat)}`} className="ft-lnk"><span className="ft-lnk-dot"/>{label}</Link></li>
+                {FOOTER_COURSES.map(({ cat, label }) => (
+                  <li key={cat}>
+                    {/*
+                      This navigates to /courses?category=<cat>
+                      The Courses.jsx page reads ?category from the URL and sets activeCategory,
+                      so the filter will auto-apply on load.
+                    */}
+                    <Link
+                      to={`/courses?category=${encodeURIComponent(cat)}`}
+                      className="ft-lnk"
+                    >
+                      <span className="ft-lnk-dot"/>{label}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>
+
+            {/* Contact */}
             <div>
               <div className="ft-col-title">Contact Us</div>
               <div className="ft-contact-item"><div className="ft-contact-ic"><Mail size={12}/></div>panigrahibarsharani20@gmail.com</div>
               <div className="ft-contact-item"><div className="ft-contact-ic"><Phone size={12}/></div>+91 6372301256</div>
               <div className="ft-contact-item"><div className="ft-contact-ic"><MapPin size={12}/></div>Bhubaneswar, India</div>
             </div>
+
           </div>
+
           <div className="ft-bottom">
             <div className="ft-copy">© {new Date().getFullYear()} Lernify. All rights reserved.</div>
             <div className="ft-btm-links">

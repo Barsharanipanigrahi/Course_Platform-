@@ -1,5 +1,6 @@
 import './App.css'
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
 // Layouts
 import MainLayout from './layouts/MainLayout';
@@ -27,6 +28,9 @@ import CourseDetails from './components/home/CourseDetails';
 import AdminUsers from './pages/admin/AdminUsers';
 
 function App() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, [pathname]);
+
   return (
     <Routes>
       {/* Public Routes with Main Layout */}

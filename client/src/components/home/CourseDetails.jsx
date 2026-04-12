@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../services/api";
-import { BookOpen, IndianRupee, ArrowLeft, Tag, BarChart2, Star, Send, User } from "lucide-react";
+import { BookOpen, IndianRupee, ArrowLeft, Tag, BarChart2, Star, Send, User, Clock } from "lucide-react";
+import PaymentModal from "../../components/course/PaymentModal";
 
 const LEVEL_COLORS = { Beginner: "#22c55e", Intermediate: "#f97316", Advanced: "#ef4444" };
 const CAT_EMOJI = {
@@ -31,16 +32,16 @@ const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [course,         setCourse]         = useState(null);
-  const [loading,        setLoading]        = useState(true);
-  const [enrolling,      setEnrolling]      = useState(false);
-  const [reviews,        setReviews]        = useState([]);
-  const [reviewsLoading, setReviewsLoading] = useState(true);
-  const [submitting,     setSubmitting]     = useState(false);
-  const [hoverStar,      setHoverStar]      = useState(0);
-  const [newRating,      setNewRating]      = useState(0);
-  const [newComment,     setNewComment]     = useState("");
-  const [formMsg,        setFormMsg]        = useState({ type: "", text: "" });
+  const [course,          setCourse]         = useState(null);
+  const [loading,         setLoading]        = useState(true);
+  const [reviews,         setReviews]        = useState([]);
+  const [reviewsLoading,  setReviewsLoading] = useState(true);
+  const [submitting,      setSubmitting]     = useState(false);
+  const [hoverStar,       setHoverStar]      = useState(0);
+  const [newRating,       setNewRating]      = useState(0);
+  const [newComment,      setNewComment]     = useState("");
+  const [formMsg,         setFormMsg]        = useState({ type: "", text: "" });
+  const [paymentOpen,     setPaymentOpen]    = useState(false);
 
   const fetchCourse = async () => {
     try {
@@ -61,17 +62,6 @@ const CourseDetails = () => {
 
   useEffect(() => { fetchCourse(); fetchReviews(); }, []);
 
-  const handleEnroll = async (courseId) => {
-    const token = localStorage.getItem("token");
-    if (!token) { alert("Please login first to enroll!"); return; }
-    setEnrolling(true);
-    try {
-      const res = await api.post("/enrollment/enroll", { courseId }, { headers: { Authorization: `Bearer ${token}` } });
-      alert(res.data.message);
-    } catch (err) { console.log(err); alert("Enrollment failed"); }
-    finally { setEnrolling(false); }
-  };
-
   const handleSubmitReview = async () => {
     setFormMsg({ type: "", text: "" });
     const token = localStorage.getItem("token");
@@ -84,7 +74,7 @@ const CourseDetails = () => {
       const res = await api.post(
         "/course/reviews/add",
         { courseId: id, rating: newRating, comment: newComment.trim() },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
       if (res.data.status) {
         setFormMsg({ type: "success", text: "Review submitted successfully!" });
@@ -106,9 +96,9 @@ const CourseDetails = () => {
   const fmtDate = (d) =>
     d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "";
 
-  const catEmoji = course?.category?.name ? (CAT_EMOJI[course.category.name] || "📖") : null;
-  const lvlColor = course?.level ? (LEVEL_COLORS[course.level] || "#2dd4bf") : null;
-  const isFree   = !course?.price || course.price === "Free" || course.price === 0;
+  const catEmoji  = course?.category?.name ? (CAT_EMOJI[course.category.name] || "📖") : null;
+  const lvlColor  = course?.level ? (LEVEL_COLORS[course.level] || "#2dd4bf") : null;
+  const isFree    = !course?.price || course.price === "Free" || course.price === 0;
 
   return (
     <>
@@ -165,14 +155,12 @@ const CourseDetails = () => {
           </div>
         )}
 
-        {/* Not found */}
         {!loading && !course && (
           <div style={{ maxWidth:780, margin:"0 auto", textAlign:"center", padding:"5rem 0", color:"rgba(226,250,248,.45)" }}>
             Course not found.
           </div>
         )}
 
-        {/* Course + Reviews */}
         {!loading && course && (
           <div style={{ maxWidth:780, margin:"0 auto", animation:"cdFadeUp .4s ease both" }}>
 
@@ -200,6 +188,12 @@ const CourseDetails = () => {
                           <BarChart2 size={10}/> {course.level}
                         </span>
                       )}
+                      {/* ── DURATION CHIP in header ── */}
+                      {course.duration && (
+                        <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:".72rem", fontWeight:700, padding:"3px 11px", borderRadius:100, background:"rgba(249,115,22,.1)", color:"#fb923c", border:"1px solid rgba(249,115,22,.25)" }}>
+                          <Clock size={10}/> {course.duration}
+                        </span>
+                      )}
                     </div>
                     {avgRating && (
                       <div style={{ display:"inline-flex", alignItems:"center", gap:7, background:"rgba(249,115,22,.1)", border:"1px solid rgba(249,115,22,.22)", borderRadius:100, padding:"4px 12px" }}>
@@ -217,7 +211,34 @@ const CourseDetails = () => {
                 <p style={{ color:"rgba(226,250,248,.65)", fontSize:".97rem", lineHeight:1.8, marginBottom:"2rem" }}>
                   {course.description || "No description available."}
                 </p>
+
+                {/* ── DURATION BANNER (shown before enroll button) ── */}
+                {course.duration && (
+                  <div style={{
+                    display:"flex", alignItems:"center", gap:14,
+                    background:"rgba(249,115,22,.08)", border:"1px solid rgba(249,115,22,.22)",
+                    borderRadius:12, padding:"14px 18px", marginBottom:"1.6rem",
+                  }}>
+                    <div style={{ width:40, height:40, borderRadius:10, background:"rgba(249,115,22,.15)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                      <Clock size={18} color="#f97316"/>
+                    </div>
+                    <div>
+                      <div style={{ fontSize:".68rem", fontWeight:700, textTransform:"uppercase", letterSpacing:".1em", color:"rgba(226,250,248,.35)", marginBottom:2 }}>
+                        Course Duration
+                      </div>
+                      <div style={{ fontSize:"1rem", fontWeight:800, color:"#fb923c" }}>
+                        {course.duration}
+                      </div>
+                    </div>
+                    <div style={{ marginLeft:"auto", fontSize:".78rem", color:"rgba(226,250,248,.3)", fontStyle:"italic" }}>
+                      Self-paced · Learn anytime
+                    </div>
+                  </div>
+                )}
+
                 <div style={{ height:1, background:"rgba(45,212,191,.1)", marginBottom:"1.8rem" }}/>
+
+                {/* Price + Enroll button */}
                 <div style={{ display:"flex", alignItems:"center", gap:20, flexWrap:"wrap" }}>
                   <div style={{ display:"flex", alignItems:"center", gap:6 }}>
                     <IndianRupee size={22} color={isFree ? "#22c55e" : "#2dd4bf"}/>
@@ -225,20 +246,28 @@ const CourseDetails = () => {
                       {isFree ? "Free" : course.price}
                     </span>
                   </div>
-                  <button className="cd-enroll-btn" onClick={() => handleEnroll(course._id)} disabled={enrolling}
-                    style={{ padding:"13px 32px", borderRadius:12, background:"#f97316", color:"#fff", fontSize:".95rem", fontWeight:700, border:"none", cursor:enrolling ? "wait" : "pointer", fontFamily:"'DM Sans',sans-serif", boxShadow:"0 8px 24px rgba(249,115,22,.3)", opacity:enrolling ? .7 : 1 }}>
-                    {enrolling ? "Enrolling…" : "Enroll Now"}
+
+                  {/* Installment hint */}
+                  {!isFree && (
+                    <div style={{ fontSize:"0.78rem", color:"rgba(226,250,248,0.35)", borderLeft:"1px solid rgba(45,212,191,0.15)", paddingLeft:16 }}>
+                      or <strong style={{ color:"#2dd4bf" }}>₹{Math.round(course.price / 3)}/mo</strong> × 3 installments<br/>
+                      <span style={{ color:"#f97316", fontWeight:700 }}>10% off</span> with full payment
+                    </div>
+                  )}
+
+                  <button
+                    className="cd-enroll-btn"
+                    onClick={() => setPaymentOpen(true)}
+                    style={{ padding:"13px 32px", borderRadius:12, background:"#f97316", color:"#fff", fontSize:".95rem", fontWeight:700, border:"none", cursor:"pointer", fontFamily:"'DM Sans',sans-serif", boxShadow:"0 8px 24px rgba(249,115,22,.3)" }}
+                  >
+                    {isFree ? "Enroll Now — Free" : "Enroll Now"}
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* ════════════════════════
-                REVIEWS SECTION
-            ════════════════════════ */}
+            {/* ── REVIEWS SECTION (unchanged) ── */}
             <div style={{ background:"#134e4a", border:"1px solid rgba(45,212,191,.2)", borderRadius:20, overflow:"hidden", boxShadow:"0 24px 64px rgba(0,0,0,.4)" }}>
-
-              {/* Header */}
               <div style={{ background:"#0f2027", padding:"1.3rem 2.2rem", borderBottom:"1px solid rgba(45,212,191,.12)", display:"flex", alignItems:"center", gap:10 }}>
                 <Star size={17} style={{ fill:"#f97316", color:"#f97316" }}/>
                 <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.15rem", fontWeight:800, color:"#e2faf8", margin:0 }}>
@@ -253,14 +282,11 @@ const CourseDetails = () => {
               </div>
 
               <div style={{ padding:"1.8rem 2.2rem" }}>
-
-                {/* ── Add Review Form ── */}
+                {/* Add Review Form */}
                 <div style={{ background:"#0f2027", borderRadius:14, padding:"1.4rem 1.5rem", marginBottom:"1.8rem", border:"1px solid rgba(45,212,191,.12)" }}>
                   <p style={{ fontSize:".72rem", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", color:"#2dd4bf", margin:"0 0 1rem" }}>
                     Leave a Review
                   </p>
-
-                  {/* Star picker */}
                   <div style={{ marginBottom:"1rem" }}>
                     <div style={{ fontSize:".76rem", color:"rgba(226,250,248,.4)", marginBottom:6 }}>Your Rating</div>
                     <div style={{ display:"flex", alignItems:"center", gap:4 }}>
@@ -279,14 +305,10 @@ const CourseDetails = () => {
                       )}
                     </div>
                   </div>
-
-                  {/* Comment */}
                   <textarea className="cd-textarea" value={newComment} onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Share your experience with this course…" rows={3}
                     style={{ width:"100%", resize:"vertical", background:"rgba(45,212,191,.05)", border:"1px solid rgba(45,212,191,.18)", borderRadius:10, color:"#e2faf8", fontSize:".88rem", fontFamily:"'DM Sans',sans-serif", padding:"11px 13px", boxSizing:"border-box", lineHeight:1.7, marginBottom:"1rem" }}
                   />
-
-                  {/* Feedback */}
                   {formMsg.text && (
                     <div style={{ borderRadius:8, padding:"8px 13px", fontSize:".8rem", marginBottom:".8rem",
                       background: formMsg.type === "error" ? "rgba(239,68,68,.1)" : "rgba(34,197,94,.1)",
@@ -296,14 +318,13 @@ const CourseDetails = () => {
                       {formMsg.text}
                     </div>
                   )}
-
                   <button className="cd-submit-btn" onClick={handleSubmitReview} disabled={submitting}
                     style={{ display:"inline-flex", alignItems:"center", gap:7, padding:"10px 22px", borderRadius:10, background:"#0d9488", color:"#fff", fontSize:".86rem", fontWeight:700, border:"none", cursor:submitting ? "wait" : "pointer", fontFamily:"'DM Sans',sans-serif", opacity:submitting ? .7 : 1 }}>
                     <Send size={13}/> {submitting ? "Submitting…" : "Submit Review"}
                   </button>
                 </div>
 
-                {/* ── Reviews list ── */}
+                {/* Reviews list */}
                 {reviewsLoading ? (
                   <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                     {[1,2,3].map((i) => <div key={i} style={{ ...skeletonBase, height:88, borderRadius:12 }}/>)}
@@ -321,27 +342,19 @@ const CourseDetails = () => {
                       <div key={rev._id || idx} className="cd-rev-card"
                         style={{ background:"rgba(45,212,191,.03)", border:"1px solid rgba(45,212,191,.1)", borderRadius:14, padding:"1.1rem 1.3rem" }}>
                         <div style={{ display:"flex", alignItems:"flex-start", gap:12 }}>
-                          {/* Avatar */}
                           <div style={{ width:38, height:38, borderRadius:"50%", background:"rgba(45,212,191,.15)", border:"1px solid rgba(45,212,191,.22)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                             <User size={15} color="#2dd4bf"/>
                           </div>
                           <div style={{ flex:1, minWidth:0 }}>
                             <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap", marginBottom:5 }}>
-                              <span style={{ fontWeight:700, fontSize:".88rem", color:"#e2faf8" }}>
-                                {rev.name || "Anonymous"}
-                              </span>
+                              <span style={{ fontWeight:700, fontSize:".88rem", color:"#e2faf8" }}>{rev.name || "Anonymous"}</span>
                               <StarDisplay value={rev.rating} size={12}/>
-                              <span style={{ fontSize:".7rem", color:"rgba(226,250,248,.3)", marginLeft:"auto" }}>
-                                {fmtDate(rev.createdAt)}
-                              </span>
+                              <span style={{ fontSize:".7rem", color:"rgba(226,250,248,.3)", marginLeft:"auto" }}>{fmtDate(rev.createdAt)}</span>
                             </div>
                             {rev.comment && (
-                              <p style={{ color:"rgba(226,250,248,.6)", fontSize:".86rem", lineHeight:1.7, margin:0 }}>
-                                {rev.comment}
-                              </p>
+                              <p style={{ color:"rgba(226,250,248,.6)", fontSize:".86rem", lineHeight:1.7, margin:0 }}>{rev.comment}</p>
                             )}
                           </div>
-                          {/* Badge */}
                           <div style={{ background:"rgba(249,115,22,.12)", border:"1px solid rgba(249,115,22,.22)", borderRadius:8, padding:"3px 9px", fontSize:".8rem", fontWeight:800, color:"#f97316", flexShrink:0 }}>
                             {rev.rating}/5
                           </div>
@@ -350,13 +363,24 @@ const CourseDetails = () => {
                     ))}
                   </div>
                 )}
-
               </div>
             </div>
 
           </div>
         )}
       </div>
+
+      {/* Payment Modal */}
+      {paymentOpen && (
+        <PaymentModal
+          course={course}
+          onClose={() => setPaymentOpen(false)}
+          onSuccess={() => {
+            setPaymentOpen(false);
+            navigate("/my-courses");
+          }}
+        />
+      )}
     </>
   );
 };

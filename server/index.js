@@ -2,6 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const orderRoutes = require('./route/orderRoutes');
+
 dotenv.config();
 
 // Connect to the database
@@ -12,6 +14,7 @@ const PORT = process.env.PORT || 8000;
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/order', orderRoutes);
 
 
 // Routes
@@ -24,7 +27,7 @@ const catagoryRoutes = require('./route/categoryRoutes');
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/Contact', ContactRoutes);
+app.use('/api/contact', ContactRoutes);  
 app.use('/api/course', CoursesRoutes);
 app.use("/api/enrollment", enrollmentRoutes);
 app.use("/api/user", userRoutes);
