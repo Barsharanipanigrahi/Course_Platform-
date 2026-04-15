@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ClipboardList, Search, X, BookOpen, Calendar, Mail, Award, IndianRupee, CreditCard, Zap } from "lucide-react";
 import api from "../../services/api";
 
-/* ── Skeleton shimmer ─────────────────────────────────────── */
+/* â”€â”€ Skeleton shimmer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const skeletonBase = {
   background: "linear-gradient(90deg, #323235 25%, #3a3a3e 50%, #323235 75%)",
   backgroundSize: "200% 100%",
@@ -10,7 +10,7 @@ const skeletonBase = {
   borderRadius: 6,
 };
 
-/* ── Skeleton Row ─────────────────────────────────────────── */
+/* â”€â”€ Skeleton Row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */ 
 const SkeletonRow = ({ i }) => (
   <tr style={{
     borderBottom: "1px solid rgba(255,255,255,0.04)",
@@ -27,7 +27,7 @@ const SkeletonRow = ({ i }) => (
   </tr>
 );
 
-/* ── Skeleton Drawer Card ─────────────────────────────────── */
+/* â”€â”€ Skeleton Drawer Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SkeletonCard = () => (
   <div style={{
     background: "#1f1f23",
@@ -45,7 +45,7 @@ const SkeletonCard = () => (
   </div>
 );
 
-/* ── Student Drawer ───────────────────────────────────────── */
+/* â”€â”€ Student Drawer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */     
 const StudentDrawer = ({ student, onClose, onStatusChange }) => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -87,13 +87,13 @@ const StudentDrawer = ({ student, onClose, onStatusChange }) => {
   }, [student]);
 
   const formatDate = (d) => {
-    if (!d) return "—";
+    if (!d) return "â€”";
     return new Date(d).toLocaleDateString("en-US", {
       year: "numeric", month: "short", day: "numeric",
     });
   };
 
-  const fmt = (n) => `₹${(n || 0).toLocaleString("en-IN")}`;
+  const fmt = (n) => `â‚¹${(n || 0).toLocaleString("en-IN")}`;
 
   const handleDrawerStatusToggle = async (e, course) => {
     e.stopPropagation();
@@ -321,7 +321,7 @@ const StudentDrawer = ({ student, onClose, onStatusChange }) => {
                     )}
                   </div>
 
-                  {/* ── Payment Info Block ── */}
+                  {/* â”€â”€ Payment Info Block â”€â”€ */}
                   <div style={{
                     marginTop: 10,
                     padding: "8px 10px",
@@ -367,7 +367,7 @@ const StudentDrawer = ({ student, onClose, onStatusChange }) => {
                             fontSize: "0.75rem", fontWeight: 800,
                             color: order.remainingAmount > 0 ? "#f87171" : "rgba(255,255,255,0.2)",
                           }}>
-                            {order.remainingAmount > 0 ? fmt(order.remainingAmount) : "—"}
+                            {order.remainingAmount > 0 ? fmt(order.remainingAmount) : "â€”"}
                           </span>
                         </div>
 
@@ -431,9 +431,9 @@ const StudentDrawer = ({ student, onClose, onStatusChange }) => {
   );
 };
 
-/* ══════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 /*  Main Page                                                 */
-/* ══════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const AdminEnrollments = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -534,13 +534,13 @@ const AdminEnrollments = () => {
   );
 
   const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
+    if (!dateStr) return "â€”";
     return new Date(dateStr).toLocaleDateString("en-US", {
       year: "numeric", month: "short", day: "numeric",
     });
   };
 
-  const fmt = (n) => `₹${(n || 0).toLocaleString("en-IN")}`;
+  const fmt = (n) => `â‚¹${(n || 0).toLocaleString("en-IN")}`;
 
   return (
     <div style={{
@@ -567,7 +567,7 @@ const AdminEnrollments = () => {
         .status-btn:hover { filter: brightness(1.2); transform: scale(1.04); }
       `}</style>
 
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div style={{ marginBottom: "2rem" }}>
         <p style={{
           fontSize: "0.68rem", fontWeight: 700, color: "#f59e0b",
@@ -584,11 +584,11 @@ const AdminEnrollments = () => {
         <p style={{ fontSize: "0.8rem", color: "#52525b", marginTop: 4 }}>
           {loading
             ? "Loading..."
-            : `${enrollments.length} enrollment${enrollments.length !== 1 ? "s" : ""} total — click any row to view student dashboard`}
+            : `${enrollments.length} enrollment${enrollments.length !== 1 ? "s" : ""} total â€” click any row to view student dashboard`}
         </p>
       </div>
 
-      {/* ── Search Bar ── */}
+      {/* â”€â”€ Search Bar â”€â”€ */}
       <div style={{ marginBottom: "1.25rem", position: "relative", maxWidth: 360 }}>
         <Search size={15} style={{
           position: "absolute", left: 12, top: "50%",
@@ -598,7 +598,7 @@ const AdminEnrollments = () => {
           className="enroll-search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by user, email or course…"
+          placeholder="Search by user, email or courseâ€¦"
           style={{
             width: "100%",
             padding: "9px 12px 9px 36px",
@@ -614,7 +614,7 @@ const AdminEnrollments = () => {
         />
       </div>
 
-      {/* ── Table ── */}
+      {/* â”€â”€ Table â”€â”€ */}
       <div style={{
         borderRadius: 16,
         overflow: "hidden",
@@ -724,13 +724,13 @@ const AdminEnrollments = () => {
                     {/* Pending */}
                     <td style={{ padding: "1rem" }}>
                       {isFree ? (
-                        <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.2)" }}>—</span>
+                        <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.2)" }}>â€”</span>
                       ) : (
                         <span style={{
                           fontSize: "0.8rem", fontWeight: 800,
                           color: order.remainingAmount > 0 ? "#f87171" : "rgba(255,255,255,0.2)",
                         }}>
-                          {order.remainingAmount > 0 ? fmt(order.remainingAmount) : "—"}
+                          {order.remainingAmount > 0 ? fmt(order.remainingAmount) : "â€”"}
                         </span>
                       )}
                     </td>
@@ -766,7 +766,7 @@ const AdminEnrollments = () => {
         </table>
       </div>
 
-      {/* ── Student Drawer ── */}
+      {/* â”€â”€ Student Drawer â”€â”€ */}
       <StudentDrawer
         student={selectedStudent}
         onClose={() => setSelectedStudent(null)}
