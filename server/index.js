@@ -31,6 +31,7 @@ app.use('/api/contact', ContactRoutes);
 app.use('/api/course', CoursesRoutes);
 app.use("/api/enrollment", enrollmentRoutes);
 app.use("/api/user", userRoutes);
+
 app.use("/api/category", catagoryRoutes);
 
 app.get('/', (req, res) => {
