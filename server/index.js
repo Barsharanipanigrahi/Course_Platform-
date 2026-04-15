@@ -24,6 +24,7 @@ const CoursesRoutes = require('./route/courseRoutes');
 const enrollmentRoutes = require('./route/enrollmentRoutes');
 const userRoutes = require('./route/userRoutes');
 const catagoryRoutes = require('./route/categoryRoutes');
+const reviewRoutes = require('./route/reviewRoutes');
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
@@ -31,6 +32,7 @@ app.use('/api/contact', ContactRoutes);
 app.use('/api/course', CoursesRoutes);
 app.use("/api/enrollment", enrollmentRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 app.use("/api/category", catagoryRoutes);
 

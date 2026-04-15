@@ -58,9 +58,10 @@ const AdminReviews = () => {
   const fetchReviews = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get("/course/reviews/all", {
+      const res = await api.get("/course/all", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
+      console.log(res?.data?.reviews)
       if (res.data.status) setReviews(res.data.reviews || []);
     } catch (err) {
       console.error(err);

@@ -65,12 +65,9 @@ const ReplyContact = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        type: 'OAuth2',
-        user: 'your@gmail.com',
-        clientId: '123456789-abc.apps.googleusercontent.com',  // ← from Step 3
-        clientSecret: 'GOCSPX-xxxxxxxxxxxxxxxx',               // ← from Step 3
-        refreshToken: '1//xxxxxxxxxxxxxxxxxxxxxxxx',            // ← from Step 4
-      }
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
     });
 
     await transporter.sendMail({
@@ -81,7 +78,7 @@ const ReplyContact = async (req, res) => {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f59e0b; border-radius: 12px; overflow: hidden;">
           <div style="background: #f59e0b; padding: 24px 32px;">
-            <h2 style="margin: 0; color: #18181b; font-size: 1.2rem; font-weight: 800;">📚 Learnify</h2>
+            <h2 style="margin: 0; color: #18181b;">📚 Learnify</h2>
             <p style="margin: 4px 0 0; color: rgba(24,24,27,0.65); font-size: 0.8rem;">Response to your enquiry</p>
           </div>
           <div style="padding: 32px; background: #18181b; color: #fafafa;">
@@ -103,7 +100,6 @@ const ReplyContact = async (req, res) => {
       await Contact.findByIdAndUpdate(contactId, { replied: true, repliedAt: new Date() });
     }
 
-    console.log("✅ Email sent to:", to);
     return res.json({ message: "Reply sent successfully.", status: true });
 
   } catch (err) {
@@ -111,5 +107,4 @@ const ReplyContact = async (req, res) => {
     return res.json({ message: "Failed to send reply email.", status: false });
   }
 };
-
 module.exports = { AddContact, GetContact, UpdateContact, DeleteContact, ReplyContact };

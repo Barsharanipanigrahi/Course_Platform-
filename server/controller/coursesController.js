@@ -73,19 +73,19 @@ const AddCourseReview = async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token)
     return res.status(401).json({ status: false, message: "Unauthorized" });
-let userId;
-try {
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  userId = decoded.id;
-} catch (err) {
-  return res.status(401).json({ status: false, message: "Invalid token" });
-}
+  let userId;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    userId = decoded.id;
+  } catch (err) {
+    return res.status(401).json({ status: false, message: "Invalid token" });
+  }
 
-const user = await User.findById(userId).select("name");
-if (!user)
-  return res.status(404).json({ status: false, message: "User not found" });
+  const user = await User.findById(userId).select("name");
+  if (!user)
+    return res.status(404).json({ status: false, message: "User not found" });
 
-const userName = user.name;
+  const userName = user.name;
 
   const { courseId, rating, comment } = req.body;
   if (!courseId || !rating || !comment)

@@ -1,5 +1,5 @@
-const Review = require("../models/Review");
-const Course = require("../models/Course");
+const Review = require("../model/Review");
+const Course = require("../model/Courses");
 
 // ─── GET /api/course/reviews/all ────────────────────────────────
 // Admin: fetch every review across all courses, newest first
