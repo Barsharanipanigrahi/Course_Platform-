@@ -1,14 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, BookOpen, MessageSquare, Users, LogOut, GraduationCap, Tag, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, BookOpen, MessageSquare, Users, LogOut, GraduationCap, Tag, ClipboardList, Star } from 'lucide-react';
 
 const SIDEBAR_LINKS = [
   { to: '/admin',             label: 'Dashboard',   icon: <LayoutDashboard size={17}/> },
   { to: '/admin/course',      label: 'Courses',     icon: <BookOpen size={17}/>        },
   { to: '/admin/categories',  label: 'Categories',  icon: <Tag size={17}/>             },
   { to: '/admin/enrollments', label: 'Enrollments', icon: <ClipboardList size={17}/>   },
+  { to: '/admin/reviews',     label: 'Reviews',     icon: <Star size={17}/>            },
   { to: '/admin/users',       label: 'Users',       icon: <Users size={17}/>           },
-  
 ];
 
 const Sidebar = () => {
@@ -25,16 +25,9 @@ const Sidebar = () => {
         .sb-bg{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(245,158,11,0.04) 1px,transparent 1px);background-size:20px 20px;pointer-events:none;}
         .sb-top{padding:1.5rem 1.3rem 1.2rem;border-bottom:1px solid rgba(245,158,11,0.1);position:relative;z-index:1;}
         .sb-logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
-        
         .sb-logo-ic{width:34px;height:34px;background:#f59e0b;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#18181b;flex-shrink:0;}
-     .sb-logo-txt {
-  color: #fff; /* Learn = white */
-  font-weight: 800;
-}
-
-.sb-logo-txt span {
-  color: #f97316; /* ify = orange */
-}
+        .sb-logo-txt{color:#fff;font-weight:800;}
+        .sb-logo-txt span{color:#f97316;}
         .sb-logo-sub{font-size:0.68rem;color:rgba(250,250,250,0.4);font-weight:500;margin-top:1px;}
         .sb-nav{flex:1;padding:1rem 0.8rem;display:flex;flex-direction:column;gap:3px;position:relative;z-index:1;}
         .sb-nav-lbl{font-size:0.63rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,158,11,0.35);padding:0 0.6rem;margin-bottom:4px;margin-top:8px;}
@@ -63,9 +56,10 @@ const Sidebar = () => {
         <div className="sb-top">
           <Link to="/" className="sb-logo">
             <div className="sb-logo-ic"><GraduationCap size={18}/></div>
-            <div><div className="sb-logo-txt">
-  Learn<span>ify</span>
-</div><div className="sb-logo-sub">Admin Panel</div></div>
+            <div>
+              <div className="sb-logo-txt">Learn<span>ify</span></div>
+              <div className="sb-logo-sub">Admin Panel</div>
+            </div>
           </Link>
         </div>
 

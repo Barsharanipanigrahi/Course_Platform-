@@ -259,14 +259,14 @@ const PaymentModal = ({ course, onClose, onSuccess }) => {
             </div>
 
             {/* QR Image */}
-            <div style={{ display:"flex", justifyContent:"center", marginBottom:"1rem" }}>
+            {/* <div style={{ display:"flex", justifyContent:"center", marginBottom:"1rem" }}>
               <div style={{ background:"#fff", borderRadius:16, padding:12, display:"inline-block", boxShadow:"0 8px 32px rgba(0,0,0,0.4)" }}>
                 <img src={`data:image/jpeg;base64,${QR_IMAGE}`} alt="PhonePe QR Code" style={{ width:200, height:200, display:"block", borderRadius:8 }} />
               </div>
-            </div>
+            </div> */}
 
             {/* Name */}
-            <p style={{ textAlign:"center", fontSize:"0.85rem", fontWeight:700, color:"#e2faf8", marginBottom:"0.8rem", letterSpacing:"0.05em" }}>LILABATI PANIGRAHI</p>
+            {/* <p style={{ textAlign:"center", fontSize:"0.85rem", fontWeight:700, color:"#e2faf8", marginBottom:"0.8rem", letterSpacing:"0.05em" }}>LILABATI PANIGRAHI</p> */}
 
             {/* UPI ID copy */}
             <div style={{ display:"flex", alignItems:"center", gap:8, background:"rgba(45,212,191,0.06)", border:"1px solid rgba(45,212,191,0.18)", borderRadius:10, padding:"10px 14px", marginBottom:"1.2rem" }}>

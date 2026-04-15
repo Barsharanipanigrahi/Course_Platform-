@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ClipboardList, Search, X, BookOpen, Calendar, Mail, Award } from "lucide-react";
+import { ClipboardList, Search, X, BookOpen, Calendar, Mail, Award, IndianRupee, CreditCard, Zap } from "lucide-react";
 import api from "../../services/api";
 
 /* ── Skeleton shimmer ─────────────────────────────────────── */
@@ -21,6 +21,8 @@ const SkeletonRow = ({ i }) => (
     <td style={{ padding: "1rem" }}><div style={{ ...skeletonBase, width: 170, height: 12 }} /></td>
     <td style={{ padding: "1rem" }}><div style={{ ...skeletonBase, width: 150, height: 12 }} /></td>
     <td style={{ padding: "1rem" }}><div style={{ ...skeletonBase, width: 100, height: 12 }} /></td>
+    <td style={{ padding: "1rem" }}><div style={{ ...skeletonBase, width: 80, height: 12 }} /></td>
+    <td style={{ padding: "1rem" }}><div style={{ ...skeletonBase, width: 80, height: 12 }} /></td>
     <td style={{ padding: "1rem" }}><div style={{ ...skeletonBase, width: 60, height: 22, borderRadius: 100 }} /></td>
   </tr>
 );
@@ -47,6 +49,7 @@ const SkeletonCard = () => (
 const StudentDrawer = ({ student, onClose, onStatusChange }) => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [paymentMap, setPaymentMap] = useState({});
 
   useEffect(() => {
     if (!student) return;
@@ -54,11 +57,26 @@ const StudentDrawer = ({ student, onClose, onStatusChange }) => {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await api.get(`/enrollment/user/${student.userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const headers = { Authorization: `Bearer ${token}` };
+
+        const res = await api.get(`/enrollment/user/${student.userId}`, { headers });
         const data = res.data.enrollments || res.data;
         setCourses(Array.isArray(data) ? data : []);
+
+        // Fetch orders for this student
+        try {
+          const ordersRes = await api.get("/order/all", { headers });
+          const orders = ordersRes.data.orders || [];
+          const map = {};
+          orders.forEach((o) => {
+            const uid = o.user?._id || o.user;
+            const cid = o.course?._id || o.course;
+            map[`${uid}_${cid}`] = o;
+          });
+          setPaymentMap(map);
+        } catch (_) {
+          setPaymentMap({});
+        }
       } catch (_) {
         setCourses([]);
       } finally {
@@ -75,6 +93,8 @@ const StudentDrawer = ({ student, onClose, onStatusChange }) => {
     });
   };
 
+  const fmt = (n) => `₹${(n || 0).toLocaleString("en-IN")}`;
+
   const handleDrawerStatusToggle = async (e, course) => {
     e.stopPropagation();
     const newStatus = course.status === "active" ? "inactive" : "active";
@@ -88,7 +108,6 @@ const StudentDrawer = ({ student, onClose, onStatusChange }) => {
       setCourses((prev) =>
         prev.map((c) => c._id === course._id ? { ...c, status: newStatus } : c)
       );
-      // Sync status back to parent table
       onStatusChange(course._id, newStatus);
     } catch (err) {
       console.error("Status update failed:", err);
@@ -230,6 +249,11 @@ const StudentDrawer = ({ student, onClose, onStatusChange }) => {
               const title = c.course?.title || c.courseTitle || "Untitled Course";
               const enrolledAt = c.createdAt || c.enrolledAt || null;
 
+              // Payment info for this course
+              const courseId = c.course?._id || c.course;
+              const order = paymentMap[`${student.userId}_${courseId}`] || null;
+              const isFree = !order;
+
               return (
                 <div
                   key={c._id || i}
@@ -297,6 +321,86 @@ const StudentDrawer = ({ student, onClose, onStatusChange }) => {
                     )}
                   </div>
 
+                  {/* ── Payment Info Block ── */}
+                  <div style={{
+                    marginTop: 10,
+                    padding: "8px 10px",
+                    borderRadius: 8,
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 5,
+                  }}>
+                    {isFree ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <IndianRupee size={11} color="#2dd4bf" />
+                        <span style={{ fontSize: "0.72rem", color: "#2dd4bf", fontWeight: 700 }}>Free Course</span>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Plan type */}
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          {order.paymentType === "full"
+                            ? <Zap size={11} color="#f59e0b" />
+                            : <CreditCard size={11} color="#60a5fa" />}
+                          <span style={{
+                            fontSize: "0.72rem", fontWeight: 700,
+                            color: order.paymentType === "full" ? "#f59e0b" : "#60a5fa",
+                          }}>
+                            {order.paymentType === "full" ? "Full Payment" : "3 Installments"}
+                          </span>
+                        </div>
+
+                        {/* Paid */}
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                          <span style={{ fontSize: "0.7rem", color: "#71717a" }}>Paid</span>
+                          <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#4ade80" }}>
+                            {fmt(order.amountPaid)}
+                          </span>
+                        </div>
+
+                        {/* Pending */}
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                          <span style={{ fontSize: "0.7rem", color: "#71717a" }}>Pending</span>
+                          <span style={{
+                            fontSize: "0.75rem", fontWeight: 800,
+                            color: order.remainingAmount > 0 ? "#f87171" : "rgba(255,255,255,0.2)",
+                          }}>
+                            {order.remainingAmount > 0 ? fmt(order.remainingAmount) : "—"}
+                          </span>
+                        </div>
+
+                        {/* Progress bar */}
+                        {order.totalAmount > 0 && (
+                          <div style={{ marginTop: 2 }}>
+                            <div style={{
+                              height: 4, borderRadius: 100,
+                              background: "rgba(255,255,255,0.07)",
+                              overflow: "hidden",
+                            }}>
+                              <div style={{
+                                height: "100%",
+                                width: `${Math.min(100, Math.round((order.amountPaid / order.totalAmount) * 100))}%`,
+                                background: order.remainingAmount === 0 ? "#4ade80" : "#f59e0b",
+                                borderRadius: 100,
+                                transition: "width 0.4s ease",
+                              }} />
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 2 }}>
+                              <span style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.25)" }}>
+                                {Math.min(100, Math.round((order.amountPaid / order.totalAmount) * 100))}% paid
+                              </span>
+                              <span style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.25)" }}>
+                                Total {fmt(order.totalAmount)}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+
                   {/* Status toggle badge */}
                   <div style={{ marginTop: 10 }}>
                     <button
@@ -335,6 +439,7 @@ const AdminEnrollments = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [paymentMap, setPaymentMap] = useState({});
 
   useEffect(() => {
     const fetchAllEnrollments = async () => {
@@ -359,6 +464,7 @@ const AdminEnrollments = () => {
                     userName:    user.name,
                     userEmail:   user.email,
                     courseTitle: enrollment.course?.title || "N/A",
+                    courseId:    enrollment.course?._id || enrollment.course,
                     enrolledAt:  enrollment.createdAt || enrollment.enrolledAt || null,
                     status:      enrollment.status || "active",
                   });
@@ -370,6 +476,19 @@ const AdminEnrollments = () => {
 
         allEnrollments.sort((a, b) => new Date(b.enrolledAt) - new Date(a.enrolledAt));
         setEnrollments(allEnrollments);
+
+        // Fetch all orders and build payment map
+        try {
+          const ordersRes = await api.get("/order/all", { headers });
+          const orders = ordersRes.data.orders || [];
+          const map = {};
+          orders.forEach((o) => {
+            const uid = o.user?._id || o.user;
+            const cid = o.course?._id || o.course;
+            map[`${uid}_${cid}`] = o;
+          });
+          setPaymentMap(map);
+        } catch (_) {}
       } catch (err) {
         console.error("Fetch Enrollments Error:", err);
       } finally {
@@ -400,7 +519,6 @@ const AdminEnrollments = () => {
     }
   };
 
-  // Called from drawer to sync status back to table
   const handleDrawerStatusSync = (enrollmentId, newStatus) => {
     setEnrollments((prev) =>
       prev.map((en) =>
@@ -421,6 +539,8 @@ const AdminEnrollments = () => {
       year: "numeric", month: "short", day: "numeric",
     });
   };
+
+  const fmt = (n) => `₹${(n || 0).toLocaleString("en-IN")}`;
 
   return (
     <div style={{
@@ -508,7 +628,7 @@ const AdminEnrollments = () => {
               background: "rgba(245,158,11,0.08)",
               borderBottom: "1px solid rgba(245,158,11,0.2)",
             }}>
-              {["#", "User", "Email", "Course", "Enrolled On", "Status"].map((h) => (
+              {["#", "User", "Email", "Course", "Enrolled On", "Paid", "Pending", "Status"].map((h) => (
                 <th key={h} style={{
                   padding: "1rem",
                   fontWeight: 700,
@@ -529,7 +649,7 @@ const AdminEnrollments = () => {
               [...Array(6)].map((_, i) => <SkeletonRow key={i} i={i} />)
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{
+                <td colSpan="8" style={{
                   textAlign: "center", padding: "3rem",
                   color: "#52525b", fontSize: "0.9rem",
                 }}>
@@ -537,80 +657,110 @@ const AdminEnrollments = () => {
                 </td>
               </tr>
             ) : (
-              filtered.map((e, i) => (
-                <tr
-                  key={e._id || i}
-                  className="enroll-tr"
-                  onClick={() => setSelectedStudent(e)}
-                  style={{
-                    borderBottom: "1px solid rgba(255,255,255,0.04)",
-                    background: selectedStudent?.userId === e.userId
-                      ? "rgba(245,158,11,0.07)"
-                      : i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)",
-                  }}
-                >
-                  {/* # */}
-                  <td style={{ padding: "1rem", color: "#52525b", fontSize: "0.75rem", fontWeight: 600 }}>
-                    {i + 1}
-                  </td>
+              filtered.map((e, i) => {
+                const order = paymentMap[`${e.userId}_${e.courseId}`] || null;
+                const isFree = !order;
 
-                  {/* User */}
-                  <td style={{ padding: "1rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div style={{
-                        width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
-                        background: "rgba(245,158,11,0.15)",
-                        border: "1px solid rgba(245,158,11,0.25)",
-                        color: "#f59e0b",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: "0.7rem", fontWeight: 800,
-                      }}>
-                        {e.userName?.charAt(0).toUpperCase() || "?"}
+                return (
+                  <tr
+                    key={e._id || i}
+                    className="enroll-tr"
+                    onClick={() => setSelectedStudent(e)}
+                    style={{
+                      borderBottom: "1px solid rgba(255,255,255,0.04)",
+                      background: selectedStudent?.userId === e.userId
+                        ? "rgba(245,158,11,0.07)"
+                        : i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)",
+                    }}
+                  >
+                    {/* # */}
+                    <td style={{ padding: "1rem", color: "#52525b", fontSize: "0.75rem", fontWeight: 600 }}>
+                      {i + 1}
+                    </td>
+
+                    {/* User */}
+                    <td style={{ padding: "1rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{
+                          width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
+                          background: "rgba(245,158,11,0.15)",
+                          border: "1px solid rgba(245,158,11,0.25)",
+                          color: "#f59e0b",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: "0.7rem", fontWeight: 800,
+                        }}>
+                          {e.userName?.charAt(0).toUpperCase() || "?"}
+                        </div>
+                        <span style={{ fontWeight: 600, color: "#fafafa" }}>{e.userName}</span>
                       </div>
-                      <span style={{ fontWeight: 600, color: "#fafafa" }}>{e.userName}</span>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Email */}
-                  <td style={{ padding: "1rem", color: "#a3a3a3", fontSize: "0.8rem" }}>
-                    {e.userEmail}
-                  </td>
+                    {/* Email */}
+                    <td style={{ padding: "1rem", color: "#a3a3a3", fontSize: "0.8rem" }}>
+                      {e.userEmail}
+                    </td>
 
-                  {/* Course */}
-                  <td style={{ padding: "1rem", color: "#d4d4d8", fontSize: "0.83rem" }}>
-                    {e.courseTitle}
-                  </td>
+                    {/* Course */}
+                    <td style={{ padding: "1rem", color: "#d4d4d8", fontSize: "0.83rem" }}>
+                      {e.courseTitle}
+                    </td>
 
-                  {/* Enrolled On */}
-                  <td style={{ padding: "1rem", color: "#71717a", fontSize: "0.78rem" }}>
-                    {formatDate(e.enrolledAt)}
-                  </td>
+                    {/* Enrolled On */}
+                    <td style={{ padding: "1rem", color: "#71717a", fontSize: "0.78rem" }}>
+                      {formatDate(e.enrolledAt)}
+                    </td>
 
-                  {/* Status Toggle */}
-                  <td style={{ padding: "1rem" }}>
-                    <button
-                      className="status-btn"
-                      onClick={(ev) => handleStatusToggle(ev, e)}
-                      title={`Click to mark as ${e.status === "active" ? "inactive" : "active"}`}
-                      style={{
-                        fontSize: "0.65rem", fontWeight: 700,
-                        padding: "4px 12px", borderRadius: 100,
-                        textTransform: "capitalize", cursor: "pointer",
-                        background: e.status === "active"
-                          ? "rgba(52,211,153,0.12)"
-                          : "rgba(248,113,113,0.12)",
-                        color: e.status === "active" ? "#34d399" : "#f87171",
-                        border: `1px solid ${e.status === "active"
-                          ? "rgba(52,211,153,0.25)"
-                          : "rgba(248,113,113,0.25)"}`,
-                        transition: "all 0.2s",
-                      }}
-                    >
-                      {e.status}
-                    </button>
-                  </td>
-                </tr>
-              ))
+                    {/* Paid */}
+                    <td style={{ padding: "1rem" }}>
+                      {isFree ? (
+                        <span style={{ fontSize: "0.75rem", color: "#2dd4bf", fontWeight: 700 }}>Free</span>
+                      ) : (
+                        <span style={{ fontSize: "0.8rem", fontWeight: 800, color: "#4ade80" }}>
+                          {fmt(order.amountPaid)}
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Pending */}
+                    <td style={{ padding: "1rem" }}>
+                      {isFree ? (
+                        <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.2)" }}>—</span>
+                      ) : (
+                        <span style={{
+                          fontSize: "0.8rem", fontWeight: 800,
+                          color: order.remainingAmount > 0 ? "#f87171" : "rgba(255,255,255,0.2)",
+                        }}>
+                          {order.remainingAmount > 0 ? fmt(order.remainingAmount) : "—"}
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Status Toggle */}
+                    <td style={{ padding: "1rem" }}>
+                      <button
+                        className="status-btn"
+                        onClick={(ev) => handleStatusToggle(ev, e)}
+                        title={`Click to mark as ${e.status === "active" ? "inactive" : "active"}`}
+                        style={{
+                          fontSize: "0.65rem", fontWeight: 700,
+                          padding: "4px 12px", borderRadius: 100,
+                          textTransform: "capitalize", cursor: "pointer",
+                          background: e.status === "active"
+                            ? "rgba(52,211,153,0.12)"
+                            : "rgba(248,113,113,0.12)",
+                          color: e.status === "active" ? "#34d399" : "#f87171",
+                          border: `1px solid ${e.status === "active"
+                            ? "rgba(52,211,153,0.25)"
+                            : "rgba(248,113,113,0.25)"}`,
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        {e.status}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

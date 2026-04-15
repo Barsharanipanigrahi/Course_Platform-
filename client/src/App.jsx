@@ -14,7 +14,7 @@ import Register from './pages/public/Register';
 import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminCategories from './pages/admin/AdminCategories';
-import AdminEnrollments from './pages/admin/AdminEnrollments';
+import AdminEnrollments from './pages/admin/Adminenrollments';
 
 // Route Guards
 import ProtectedRoute from './route/ProtectedRoute';
@@ -26,6 +26,7 @@ import Mycourses from './pages/user/Mycourses';
 import AdminContacts from './pages/admin/AdminContacts';
 import CourseDetails from './components/home/CourseDetails';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminReviews from './pages/admin/AdminReviews';
 
 function App() {
   const { pathname } = useLocation();
@@ -57,6 +58,9 @@ function App() {
         <Route path="contact" element={<AdminContacts />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="enrollments" element={<AdminEnrollments />} />
+        <Route path="reviews" element={<AdminReviews />} /> 
+        
+        
       </Route>
 
       {/* Fallback */}
