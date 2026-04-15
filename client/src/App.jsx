@@ -14,7 +14,7 @@ import Register from './pages/public/Register';
 import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminCategories from './pages/admin/AdminCategories';
-import AdminEnrollments from './pages/admin/Adminenrollments';
+import AdminEnrollments from './pages/admin/AdminEnrollments';
 
 // Route Guards
 import ProtectedRoute from './route/ProtectedRoute';
