@@ -71,14 +71,14 @@ const ReplyContact = async (req, res) => {
     });
 
     await transporter.sendMail({
-      from: `"Learnify Admin" <${process.env.GMAIL_USER}>`,
+      from: `"Learnfy Admin" <${process.env.GMAIL_USER}>`,
       to,
       subject,
       text: message,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f59e0b; border-radius: 12px; overflow: hidden;">
           <div style="background: #f59e0b; padding: 24px 32px;">
-            <h2 style="margin: 0; color: #18181b;">📚 Learnify</h2>
+            <h2 style="margin: 0; color: #18181b;">📚 Learnfy</h2>
             <p style="margin: 4px 0 0; color: rgba(24,24,27,0.65); font-size: 0.8rem;">Response to your enquiry</p>
           </div>
           <div style="padding: 32px; background: #18181b; color: #fafafa;">

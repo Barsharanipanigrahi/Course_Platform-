@@ -43,6 +43,7 @@ const CourseDetails = () => {
   const [formMsg,         setFormMsg]        = useState({ type: "", text: "" });
   const [paymentOpen,     setPaymentOpen]    = useState(false);
 
+  /* ── fetch single course ── */
   const fetchCourse = async () => {
     try {
       const res = await api.get("/course/get");
@@ -51,6 +52,7 @@ const CourseDetails = () => {
     finally { setLoading(false); }
   };
 
+  /* ── fetch reviews for this course ── */
   const fetchReviews = async () => {
     setReviewsLoading(true);
     try {
@@ -62,6 +64,7 @@ const CourseDetails = () => {
 
   useEffect(() => { fetchCourse(); fetchReviews(); }, []);
 
+  /* ── submit a new review ── */
   const handleSubmitReview = async () => {
     setFormMsg({ type: "", text: "" });
     const token = localStorage.getItem("token");
@@ -71,16 +74,30 @@ const CourseDetails = () => {
 
     setSubmitting(true);
     try {
+      /*
+       * POST /course/reviews/add
+       * Body: { courseId, rating, comment }
+       *
+       * The backend must save:
+       *   - courseId  → so AdminReviews can fetch by course ID
+       *   - name      → pulled from the logged-in user's profile on the server
+       *   - rating
+       *   - comment
+       *   - createdAt → set by mongoose timestamps: true
+       *
+       * AdminReviews fetches GET /course/reviews/:courseId and gets these fields back.
+       * No changes needed here — the review is stored by the backend exactly as before.
+       */
       const res = await api.post(
         "/course/reviews/add",
         { courseId: id, rating: newRating, comment: newComment.trim() },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.data.status) {
         setFormMsg({ type: "success", text: "Review submitted successfully!" });
         setNewRating(0);
         setNewComment("");
-        fetchReviews();
+        fetchReviews(); // refresh the list on this page
       } else {
         setFormMsg({ type: "error", text: res.data.message || "Failed to submit." });
       }
@@ -96,9 +113,9 @@ const CourseDetails = () => {
   const fmtDate = (d) =>
     d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "";
 
-  const catEmoji  = course?.category?.name ? (CAT_EMOJI[course.category.name] || "📖") : null;
-  const lvlColor  = course?.level ? (LEVEL_COLORS[course.level] || "#2dd4bf") : null;
-  const isFree    = !course?.price || course.price === "Free" || course.price === 0;
+  const catEmoji = course?.category?.name ? (CAT_EMOJI[course.category.name] || "📖") : null;
+  const lvlColor = course?.level ? (LEVEL_COLORS[course.level] || "#2dd4bf") : null;
+  const isFree   = !course?.price || course.price === "Free" || course.price === 0;
 
   return (
     <>
@@ -188,7 +205,6 @@ const CourseDetails = () => {
                           <BarChart2 size={10}/> {course.level}
                         </span>
                       )}
-                      {/* ── DURATION CHIP in header ── */}
                       {course.duration && (
                         <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:".72rem", fontWeight:700, padding:"3px 11px", borderRadius:100, background:"rgba(249,115,22,.1)", color:"#fb923c", border:"1px solid rgba(249,115,22,.25)" }}>
                           <Clock size={10}/> {course.duration}
@@ -212,7 +228,6 @@ const CourseDetails = () => {
                   {course.description || "No description available."}
                 </p>
 
-                {/* ── DURATION BANNER (shown before enroll button) ── */}
                 {course.duration && (
                   <div style={{
                     display:"flex", alignItems:"center", gap:14,
@@ -238,7 +253,7 @@ const CourseDetails = () => {
 
                 <div style={{ height:1, background:"rgba(45,212,191,.1)", marginBottom:"1.8rem" }}/>
 
-                {/* Price + Enroll button */}
+                {/* Price + Enroll */}
                 <div style={{ display:"flex", alignItems:"center", gap:20, flexWrap:"wrap" }}>
                   <div style={{ display:"flex", alignItems:"center", gap:6 }}>
                     <IndianRupee size={22} color={isFree ? "#22c55e" : "#2dd4bf"}/>
@@ -247,7 +262,6 @@ const CourseDetails = () => {
                     </span>
                   </div>
 
-                  {/* Installment hint */}
                   {!isFree && (
                     <div style={{ fontSize:"0.78rem", color:"rgba(226,250,248,0.35)", borderLeft:"1px solid rgba(45,212,191,0.15)", paddingLeft:16 }}>
                       or <strong style={{ color:"#2dd4bf" }}>₹{Math.round(course.price / 3)}/mo</strong> × 3 installments<br/>
@@ -266,7 +280,7 @@ const CourseDetails = () => {
               </div>
             </div>
 
-            {/* ── REVIEWS SECTION (unchanged) ── */}
+            {/* ── REVIEWS SECTION ── */}
             <div style={{ background:"#134e4a", border:"1px solid rgba(45,212,191,.2)", borderRadius:20, overflow:"hidden", boxShadow:"0 24px 64px rgba(0,0,0,.4)" }}>
               <div style={{ background:"#0f2027", padding:"1.3rem 2.2rem", borderBottom:"1px solid rgba(45,212,191,.12)", display:"flex", alignItems:"center", gap:10 }}>
                 <Star size={17} style={{ fill:"#f97316", color:"#f97316" }}/>
@@ -282,11 +296,13 @@ const CourseDetails = () => {
               </div>
 
               <div style={{ padding:"1.8rem 2.2rem" }}>
-                {/* Add Review Form */}
+                {/* ── Add Review Form ── */}
                 <div style={{ background:"#0f2027", borderRadius:14, padding:"1.4rem 1.5rem", marginBottom:"1.8rem", border:"1px solid rgba(45,212,191,.12)" }}>
                   <p style={{ fontSize:".72rem", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", color:"#2dd4bf", margin:"0 0 1rem" }}>
                     Leave a Review
                   </p>
+
+                  {/* Star picker */}
                   <div style={{ marginBottom:"1rem" }}>
                     <div style={{ fontSize:".76rem", color:"rgba(226,250,248,.4)", marginBottom:6 }}>Your Rating</div>
                     <div style={{ display:"flex", alignItems:"center", gap:4 }}>
@@ -305,10 +321,18 @@ const CourseDetails = () => {
                       )}
                     </div>
                   </div>
-                  <textarea className="cd-textarea" value={newComment} onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Share your experience with this course…" rows={3}
+
+                  {/* Comment box */}
+                  <textarea
+                    className="cd-textarea"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Share your experience with this course…"
+                    rows={3}
                     style={{ width:"100%", resize:"vertical", background:"rgba(45,212,191,.05)", border:"1px solid rgba(45,212,191,.18)", borderRadius:10, color:"#e2faf8", fontSize:".88rem", fontFamily:"'DM Sans',sans-serif", padding:"11px 13px", boxSizing:"border-box", lineHeight:1.7, marginBottom:"1rem" }}
                   />
+
+                  {/* Feedback message */}
                   {formMsg.text && (
                     <div style={{ borderRadius:8, padding:"8px 13px", fontSize:".8rem", marginBottom:".8rem",
                       background: formMsg.type === "error" ? "rgba(239,68,68,.1)" : "rgba(34,197,94,.1)",
@@ -318,13 +342,18 @@ const CourseDetails = () => {
                       {formMsg.text}
                     </div>
                   )}
-                  <button className="cd-submit-btn" onClick={handleSubmitReview} disabled={submitting}
-                    style={{ display:"inline-flex", alignItems:"center", gap:7, padding:"10px 22px", borderRadius:10, background:"#0d9488", color:"#fff", fontSize:".86rem", fontWeight:700, border:"none", cursor:submitting ? "wait" : "pointer", fontFamily:"'DM Sans',sans-serif", opacity:submitting ? .7 : 1 }}>
+
+                  <button
+                    className="cd-submit-btn"
+                    onClick={handleSubmitReview}
+                    disabled={submitting}
+                    style={{ display:"inline-flex", alignItems:"center", gap:7, padding:"10px 22px", borderRadius:10, background:"#0d9488", color:"#fff", fontSize:".86rem", fontWeight:700, border:"none", cursor:submitting ? "wait" : "pointer", fontFamily:"'DM Sans',sans-serif", opacity:submitting ? .7 : 1 }}
+                  >
                     <Send size={13}/> {submitting ? "Submitting…" : "Submit Review"}
                   </button>
                 </div>
 
-                {/* Reviews list */}
+                {/* ── Existing reviews list ── */}
                 {reviewsLoading ? (
                   <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                     {[1,2,3].map((i) => <div key={i} style={{ ...skeletonBase, height:88, borderRadius:12 }}/>)}
@@ -339,8 +368,11 @@ const CourseDetails = () => {
                 ) : (
                   <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
                     {reviews.map((rev, idx) => (
-                      <div key={rev._id || idx} className="cd-rev-card"
-                        style={{ background:"rgba(45,212,191,.03)", border:"1px solid rgba(45,212,191,.1)", borderRadius:14, padding:"1.1rem 1.3rem" }}>
+                      <div
+                        key={rev._id || idx}
+                        className="cd-rev-card"
+                        style={{ background:"rgba(45,212,191,.03)", border:"1px solid rgba(45,212,191,.1)", borderRadius:14, padding:"1.1rem 1.3rem" }}
+                      >
                         <div style={{ display:"flex", alignItems:"flex-start", gap:12 }}>
                           <div style={{ width:38, height:38, borderRadius:"50%", background:"rgba(45,212,191,.15)", border:"1px solid rgba(45,212,191,.22)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                             <User size={15} color="#2dd4bf"/>

@@ -133,7 +133,7 @@ const Navbar = () => {
         <div className="nb-in">
           <Link to="/" className="nb-logo">
           <div className ="nb-logo-ic"><GraduationCap size={18}/></div>
-            <span className="nb-logo-txt">Learn<span>ify</span></span>
+            <span className="nb-logo-txt">Lear<span>nfy</span></span>
           </Link>
 
           <div className="nb-links">

@@ -6,11 +6,7 @@ const AddCourses = async (req, res) => {
   try {
     const courses = await Courses.create(req.body);
     await courses.populate("category");
-    return res.json({
-      message: "success",
-      Courses: courses,
-      status: true,
-    });
+    return res.json({ message: "success", Courses: courses, status: true });
   } catch (err) {
     console.log(err);
     return res.json({ message: "Error while creating course", status: false });
@@ -20,11 +16,7 @@ const AddCourses = async (req, res) => {
 const GetCourses = async (req, res) => {
   try {
     const xyz = await Courses.find().populate("category");
-    return res.json({
-      message: "lets get courses",
-      courses: xyz,
-      status: true,
-    });
+    return res.json({ message: "lets get courses", courses: xyz, status: true });
   } catch (err) {
     console.log(err);
     return res.json({ message: "error while fetch", status: false });
@@ -53,7 +45,7 @@ const DeleteCourses = async (req, res) => {
   }
 };
 
-// ── GET /api/course/reviews/:courseId ──────────────────────────────
+// ── GET /api/course/reviews/:courseId ─────────────────────────────
 const GetCourseReviews = async (req, res) => {
   try {
     const course = await Courses.findById(req.params.courseId);
@@ -67,12 +59,14 @@ const GetCourseReviews = async (req, res) => {
   }
 };
 
-// ── POST /api/course/reviews/add ───────────────────────────────────
+// ── POST /api/course/reviews/add ──────────────────────────────────
+// courseId comes from req.body (sent by the frontend)
 const AddCourseReview = async (req, res) => {
   // verify token
   const token = req.headers.authorization?.split(" ")[1];
   if (!token)
     return res.status(401).json({ status: false, message: "Unauthorized" });
+
   let userId;
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -81,17 +75,17 @@ const AddCourseReview = async (req, res) => {
     return res.status(401).json({ status: false, message: "Invalid token" });
   }
 
-  const user = await User.findById(userId).select("name");
-  if (!user)
-    return res.status(404).json({ status: false, message: "User not found" });
-
-  const userName = user.name;
-
-  const { courseId, rating, comment } = req.body;
-  if (!courseId || !rating || !comment)
-    return res.status(400).json({ status: false, message: "All fields are required" });
-
   try {
+    const user = await User.findById(userId).select("name");
+    if (!user)
+      return res.status(404).json({ status: false, message: "User not found" });
+
+    // ✅ courseId comes from body now (frontend sends it there)
+    const { courseId, rating, comment } = req.body;
+
+    if (!courseId || !rating || !comment)
+      return res.status(400).json({ status: false, message: "All fields are required" });
+
     const course = await Courses.findById(courseId);
     if (!course)
       return res.status(404).json({ status: false, message: "Course not found" });
@@ -106,13 +100,34 @@ const AddCourseReview = async (req, res) => {
         message: "You have already reviewed this course",
       });
 
-    course.reviews.push({ user: userId, name: userName, rating, comment });
+    course.reviews.push({ user: userId, name: user.name, rating, comment });
     await course.save();
 
     return res.json({ status: true, message: "Review added successfully!" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ status: false, message: "Failed to add review" });
+  }
+};
+
+// ── DELETE /api/course/reviews/:reviewId ──────────────────────────
+const DeleteCourseReview = async (req, res) => {
+  try {
+    const { courseId, reviewId } = req.params;
+
+    const course = await Courses.findByIdAndUpdate(
+      courseId,
+      { $pull: { reviews: { _id: reviewId } } },
+      { new: true }
+    );
+
+    if (!course)
+      return res.status(404).json({ status: false, message: "Course not found" });
+
+    return res.status(200).json({ status: true, message: "Review deleted successfully" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ status: false, message: "Failed to delete review" });
   }
 };
 
@@ -123,4 +138,5 @@ module.exports = {
   DeleteCourses,
   GetCourseReviews,
   AddCourseReview,
+  DeleteCourseReview,
 };

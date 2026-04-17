@@ -65,7 +65,7 @@ const About = () => {
   ];
 
   const timeline = [
-    { year:"2023", title:"Founded",          desc:"Learnify was born with a vision to democratize quality education.",    side:"left"  },
+    { year:"2023", title:"Founded",          desc:"Learnfy was born with a vision to democratize quality education.",    side:"left"  },
     { year:"2024", title:"First 1K Students",desc:"Reached our first 1,000 enrolled learners across 12 courses.",        side:"right" },
     { year:"2025", title:"50+ Courses Live", desc:"Expanded our catalog with industry experts and live class support.",   side:"left"  },
     { year:"2026", title:"10K+ Learners",    desc:"Crossed 10,000 active students with a 95% satisfaction score.",       side:"right" },
@@ -387,7 +387,7 @@ const About = () => {
                 <span className="ab-tag">Our Story</span>
                 <h2 className="ab-sec-ttl">Who We Are</h2>
                 <div className="ab-sec-line"/>
-                <p className="ab-txt"><strong>Learnify</strong> is a next-generation online learning system designed to simplify course discovery, enrollment, and progress tracking for learners everywhere.</p>
+                <p className="ab-txt"><strong>Learnfy</strong> is a next-generation online learning system designed to simplify course discovery, enrollment, and progress tracking for learners everywhere.</p>
                 <p className="ab-txt">Our focus is on practical learning, real-world skills, and a seamless experience for both <strong>students and educators.</strong> We believe that quality education should be accessible to all.</p>
                 <p className="ab-txt">From structured learning paths to industry-recognized certificates, we are committed to your <strong>growth every step of the way.</strong></p>
               </div>

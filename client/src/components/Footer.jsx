@@ -78,7 +78,7 @@ const Footer = () => {
 
             {/* Brand */}
             <div>
-              <div className="ft-brand-logo">Lern<span>ify</span></div>
+              <div className="ft-brand-logo">Ler<span>nfy</span></div>
               <p className="ft-brand-desc">An online learning platform helping students grow their skills, earn certifications, and build better careers.</p>
               <div className="ft-socials">
                 <a href="https://wa.me/916372301256" target="_blank" rel="noreferrer" className="ft-soc ft-soc-wa"><FaWhatsapp /></a>

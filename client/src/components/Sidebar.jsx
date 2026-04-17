@@ -57,7 +57,7 @@ const Sidebar = () => {
           <Link to="/" className="sb-logo">
             <div className="sb-logo-ic"><GraduationCap size={18}/></div>
             <div>
-              <div className="sb-logo-txt">Learn<span>ify</span></div>
+              <div className="sb-logo-txt">Lear<span>nfy</span></div>
               <div className="sb-logo-sub">Admin Panel</div>
             </div>
           </Link>
