@@ -2,21 +2,17 @@ import { Outlet, Navigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { useAuth } from '../context/AuthContext';
 
-
 const AdminLayout = () => {
   const { user, loading } = useAuth();
 
   if (loading) return <div>Loading...</div>;
-
-  // Protect Admin Route
-  if (!user || user.role !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
+  if (!user || user.role !== 'admin') return <Navigate to="/" replace />;
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#111' }}>
       <Sidebar />
-      <div className="flex-1  overflow-y-auto h-screen">
+      {/* On mobile, Sidebar is fixed, so main content fills full width */}
+      <div style={{ flex: 1, overflowY: 'auto', minWidth: 0 }}>
         <Outlet />
       </div>
     </div>

@@ -5,8 +5,6 @@ import { Linkedin, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
 
-// ── Category names here MUST exactly match your DB category `name` field ──
-// Check your DB / backend /category/get response and adjust this list if needed.
 const FOOTER_COURSES = [
   { cat: "Cloud Computing",      label: "Cloud Computing"    },
   { cat: "Cybersecurity",        label: "Cybersecurity"      },
@@ -59,6 +57,8 @@ const Footer = () => {
         .ft-btm-links{display:flex;gap:1.4rem;}
         .ft-btm-lnk{font-size:0.75rem;color:rgba(255,255,255,0.22);text-decoration:none;transition:color 0.2s;}
         .ft-btm-lnk:hover{color:#fff;}
+        .ft-back-top{background:none;border:1px solid rgba(45,212,191,0.15);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:0.65rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:0.45rem 1rem;border-radius:4px;transition:color 0.25s,border-color 0.25s;}
+        .ft-back-top:hover{color:#2dd4bf;border-color:#2dd4bf;}
       `}</style>
       <footer className="ft">
         <div className="ft-cta">
@@ -104,11 +104,6 @@ const Footer = () => {
               <ul className="ft-links">
                 {FOOTER_COURSES.map(({ cat, label }) => (
                   <li key={cat}>
-                    {/*
-                      This navigates to /courses?category=<cat>
-                      The Courses.jsx page reads ?category from the URL and sets activeCategory,
-                      so the filter will auto-apply on load.
-                    */}
                     <Link
                       to={`/courses?category=${encodeURIComponent(cat)}`}
                       className="ft-lnk"
@@ -131,13 +126,22 @@ const Footer = () => {
           </div>
 
           <div className="ft-bottom">
-            <div className="ft-copy">© {new Date().getFullYear()} Lernify. All rights reserved.</div>
+            <div className="ft-copy">© {new Date().getFullYear()} Lernfy. All rights reserved.</div>
             <div className="ft-btm-links">
               <a href="#" className="ft-btm-lnk">Privacy Policy</a>
               <a href="#" className="ft-btm-lnk">Terms of Service</a>
               <a href="#" className="ft-btm-lnk">Sitemap</a>
             </div>
           </div>
+          {/* Back to top */}
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="ft-back-top" >
+            Back to top
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M5 9V1M5 1L1 5M5 1L9 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+         </button>
         </div>
       </footer>
     </>
