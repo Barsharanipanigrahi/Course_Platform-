@@ -544,7 +544,7 @@ const AdminEnrollments = () => {
 
   return (
     <div style={{
-      minHeight: "100vh", padding: "1.25rem",
+      minHeight: "100vh", padding: "2rem",
       background: "#18181b", fontFamily: "'DM Sans', sans-serif",
     }}>
       <style>{`
@@ -589,7 +589,7 @@ const AdminEnrollments = () => {
       </div>
 
       {/* â”€â”€ Search Bar â”€â”€ */}
-      <div style={{ marginBottom: "1.25rem", position: "relative", maxWidth: 100 }}>
+      <div style={{ marginBottom: "1.25rem", position: "relative", maxWidth: 360 }}>
         <Search size={15} style={{
           position: "absolute", left: 12, top: "50%",
           transform: "translateY(-50%)", color: "#52525b", pointerEvents: "none",
@@ -614,15 +614,14 @@ const AdminEnrollments = () => {
         />
       </div>
 
+      {/* â”€â”€ Table â”€â”€ */}
       <div style={{
-  borderRadius: 16,
-  overflow: "hidden",
-  overflowX: "auto",
-  WebkitOverflowScrolling: "touch",
-  background: "#27272a",
-  border: "1px solid rgba(245,158,11,0.15)",
-  boxShadow: "0 8px 40px rgba(0,0,0,0.4)",
-}}>
+        borderRadius: 16,
+        overflow: "hidden",
+        background: "#27272a",
+        border: "1px solid rgba(245,158,11,0.15)",
+        boxShadow: "0 8px 40px rgba(0,0,0,0.4)",
+      }}>
         <table style={{ width: "100%", fontSize: "0.875rem", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{

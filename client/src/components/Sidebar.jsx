@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, BookOpen, MessageSquare, Users, LogOut,
-         GraduationCap, Tag, ClipboardList, Star, Menu, X } from 'lucide-react';
+import { LayoutDashboard, BookOpen, MessageSquare, Users, LogOut, GraduationCap, Tag, ClipboardList, Star } from 'lucide-react';
 
 const SIDEBAR_LINKS = [
   { to: '/admin',             label: 'Dashboard',   icon: <LayoutDashboard size={17}/> },
@@ -16,31 +14,13 @@ const SIDEBAR_LINKS = [
 const Sidebar = () => {
   const { logout } = useAuth();
   const location = useLocation();
-  const [open, setOpen] = useState(false);
-
   const isActive = (path) =>
     path === '/admin' ? location.pathname === '/admin' : location.pathname.startsWith(path);
-
-  const close = () => setOpen(false);
 
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&family=DM+Sans:wght@400;500;600;700&display=swap');
-
-        /* ── Hamburger topbar (mobile only) ── */
-        .sb-topbar{display:none;align-items:center;gap:10px;padding:10px 14px;background:#18181b;border-bottom:1px solid rgba(245,158,11,0.12);position:sticky;top:0;z-index:50;}
-        .sb-topbar-logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
-        .sb-topbar-ic{width:30px;height:30px;background:#f59e0b;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#18181b;flex-shrink:0;}
-        .sb-topbar-txt{color:#fff;font-weight:800;font-size:0.95rem;}
-        .sb-topbar-txt span{color:#f97316;}
-        .sb-hamburger{margin-left:auto;background:transparent;border:none;color:#f59e0b;cursor:pointer;display:flex;align-items:center;padding:4px;}
-
-        /* ── Overlay ── */
-        .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:100;}
-        .sb-overlay.show{display:block;}
-
-        /* ── Sidebar panel ── */
         .sb{width:240px;min-height:100vh;background:#18181b;display:flex;flex-direction:column;flex-shrink:0;position:relative;overflow:hidden;border-right:1px solid rgba(245,158,11,0.1);}
         .sb-bg{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(245,158,11,0.04) 1px,transparent 1px);background-size:20px 20px;pointer-events:none;}
         .sb-top{padding:1.5rem 1.3rem 1.2rem;border-bottom:1px solid rgba(245,158,11,0.1);position:relative;z-index:1;}
@@ -64,51 +44,17 @@ const Sidebar = () => {
         .sb-msg-left{display:flex;align-items:center;gap:10px;}
         .sb-msg-badge{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:100px;font-size:0.6rem;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;background:rgba(249,115,22,0.18);color:#f97316;border:1px solid rgba(249,115,22,0.25);transition:background 0.2s,color 0.2s;}
         .sb-divider{height:1px;background:rgba(245,158,11,0.08);margin:0.5rem 0;}
+        .sb-back{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;text-decoration:none;font-size:0.84rem;font-weight:500;color:rgba(250,250,250,0.35);transition:color 0.2s,background 0.2s;}
+        .sb-back:hover{color:rgba(250,250,250,0.7);background:rgba(250,250,250,0.04);}
         .sb-foot{padding:0.8rem;border-top:1px solid rgba(245,158,11,0.08);position:relative;z-index:1;}
         .sb-logout{width:100%;display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;background:transparent;border:1px solid rgba(220,100,100,0.2);color:rgba(220,100,100,0.75);font-size:0.84rem;font-weight:600;cursor:pointer;transition:background 0.2s,color 0.2s;font-family:'DM Sans',sans-serif;}
         .sb-logout:hover{background:rgba(220,80,80,0.1);color:#f87171;}
-        .sb-close{display:none;}
-
-        /* ── Mobile breakpoint ── */
-        @media(max-width:768px){
-          .sb-topbar{display:flex;}
-          .sb-overlay{display:none;}
-          .sb-overlay.show{display:block;}
-          .sb{position:fixed;top:0;left:0;height:100vh;z-index:110;transform:translateX(-100%);transition:transform 0.25s ease;}
-          .sb.open{transform:translateX(0);}
-          .sb-close{display:flex;align-items:center;justify-content:flex-end;padding:10px 12px 0;position:relative;z-index:1;}
-          .sb-close-btn{background:transparent;border:none;color:rgba(250,250,250,0.5);cursor:pointer;display:flex;align-items:center;}
-          .sb-close-btn:hover{color:#fafafa;}
-        }
       `}</style>
 
-      {/* Mobile topbar */}
-      <div className="sb-topbar">
-        <Link to="/" className="sb-topbar-logo">
-          <div className="sb-topbar-ic"><GraduationCap size={16}/></div>
-          <div className="sb-topbar-txt">Lear<span>nfy</span></div>
-        </Link>
-        <button className="sb-hamburger" onClick={() => setOpen(true)} aria-label="Open menu">
-          <Menu size={22}/>
-        </button>
-      </div>
-
-      {/* Overlay */}
-      <div className={`sb-overlay${open ? ' show' : ''}`} onClick={close}/>
-
-      {/* Sidebar */}
-      <div className={`sb${open ? ' open' : ''}`}>
+      <div className="sb">
         <div className="sb-bg"/>
-
-        {/* Close button (mobile) */}
-        <div className="sb-close">
-          <button className="sb-close-btn" onClick={close} aria-label="Close menu">
-            <X size={20}/>
-          </button>
-        </div>
-
         <div className="sb-top">
-          <Link to="/" className="sb-logo" onClick={close}>
+          <Link to="/" className="sb-logo">
             <div className="sb-logo-ic"><GraduationCap size={18}/></div>
             <div>
               <div className="sb-logo-txt">Lear<span>nfy</span></div>
@@ -119,16 +65,17 @@ const Sidebar = () => {
 
         <nav className="sb-nav">
           <div className="sb-nav-lbl">Management</div>
+
           {SIDEBAR_LINKS.map(({ to, label, icon }) => (
-            <Link key={to} to={to} className={`sb-link${isActive(to) ? ' on' : ''}`} onClick={close}>
+            <Link key={to} to={to} className={`sb-link${isActive(to) ? ' on' : ''}`}>
               <span className="sb-link-ic">{icon}</span>{label}
             </Link>
           ))}
+
           <div className="sb-nav-lbl" style={{ marginTop: 12 }}>Communication</div>
           <Link
             to="/admin/contact"
             className={`sb-msg-link${isActive('/admin/contact') ? ' on' : ''}`}
-            onClick={close}
           >
             <span className="sb-msg-left">
               <span className="sb-link-ic"><MessageSquare size={17}/></span>
@@ -136,6 +83,7 @@ const Sidebar = () => {
             </span>
             <span className="sb-msg-badge">New</span>
           </Link>
+
           <div className="sb-divider"/>
         </nav>
 
