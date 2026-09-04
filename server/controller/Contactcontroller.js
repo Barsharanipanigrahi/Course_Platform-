@@ -85,11 +85,11 @@ const ReplyContact = async (req, res) => {
             <p style="margin: 0 0 24px; font-size: 0.95rem; line-height: 1.7; color: #d4d4d8;">
               ${message.replace(/\n/g, "<br/>")}
             </p>
-            <p style="margin: 0; font-size: 0.85rem; color: #71717a;">— The Learnify Team</p>
+            <p style="margin: 0; font-size: 0.85rem; color: #71717a;">— The Learnfy Team</p>
           </div>
           <div style="padding: 16px 32px; background: #27272a; border-top: 1px solid rgba(245,158,11,0.15);">
             <p style="margin: 0; font-size: 0.72rem; color: #52525b;">
-              This is a reply to your enquiry submitted on Learnify.
+              This is a reply to your enquiry submitted on Learnfy.
             </p>
           </div>
         </div>
